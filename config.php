@@ -1,4 +1,8 @@
 <?php
+
+/* config.php */
+
+
 // Enhanced configuration with session support
 define('DB_HOST', 'localhost');
 define('DB_USER', 'svc_terminal-app');

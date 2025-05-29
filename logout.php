@@ -1,4 +1,8 @@
 <?php
+
+/* logout.php */
+
+
 require_once 'auth_config.php';
 
 // Log the logout

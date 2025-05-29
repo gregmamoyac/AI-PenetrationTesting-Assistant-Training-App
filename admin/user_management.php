@@ -1,9 +1,5 @@
 <?php
-/**
- * User Management Utility for GhostCrew
- * This script helps create users and manage passwords
- * Run from command line: php user_management.php
- */
+/* admin/user_management.php */
 
 require_once '../auth_config.php';
 

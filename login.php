@@ -1,4 +1,8 @@
 <?php
+
+/* login.php */
+
+
 require_once 'auth_config.php';
 
 // If already authenticated, redirect to main page

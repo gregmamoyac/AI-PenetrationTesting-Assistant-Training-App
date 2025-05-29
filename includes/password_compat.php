@@ -1,11 +1,5 @@
 <?php
-/**
- * Password Compatibility Functions for GhostCrew
- * Ensures password_hash() and password_verify() are available
- * 
- * Include this file before using password functions if you're unsure
- * about PHP version compatibility
- */
+/* includes/password_compat.php */
 
 // Check if password functions are available (PHP 5.5.0+)
 if (!function_exists('password_hash') || !function_exists('password_verify')) {

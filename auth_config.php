@@ -1,4 +1,7 @@
 <?php
+
+/* auth_config.php - Updated with user instance tokens */
+
 // Authentication Configuration for GhostCrew
 
 // CRITICAL: Fix timezone synchronization between PHP and MySQL
@@ -32,6 +35,7 @@ define('SESSION_TIMEOUT', 3600); // 1 hour
 define('MAX_LOGIN_ATTEMPTS', 5);
 define('LOGIN_LOCKOUT_TIME', 900); // 15 minutes
 define('PASSWORD_MIN_LENGTH', 8);
+define('INSTANCE_TOKEN_LIFETIME', 28800); // 8 hours
 
 // Create admin database connection
 function getAdminDB() {
@@ -81,6 +85,60 @@ function generateSessionToken() {
 // Generate unique session ID
 function generateSessionId() {
     return 'sess_' . date('Ymd_His') . '_' . bin2hex(random_bytes(8));
+}
+
+// Generate unique instance token for user session
+function generateInstanceToken($userId) {
+    $adminDb = getAdminDB();
+    
+    // Clean up expired tokens
+    $adminDb->query("DELETE FROM user_instance_tokens WHERE expires_at < NOW()");
+    
+    // Deactivate old tokens for this user
+    $stmt = $adminDb->prepare("UPDATE user_instance_tokens SET is_active = 0 WHERE user_id = ?");
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    
+    // Generate new token
+    $instanceToken = 'inst_' . $userId . '_' . time() . '_' . bin2hex(random_bytes(16));
+    $expiresAt = date('Y-m-d H:i:s', time() + INSTANCE_TOKEN_LIFETIME);
+    
+    $stmt = $adminDb->prepare("INSERT INTO user_instance_tokens (user_id, instance_token, expires_at) VALUES (?, ?, ?)");
+    $stmt->bind_param("iss", $userId, $instanceToken, $expiresAt);
+    
+    if ($stmt->execute()) {
+        return $instanceToken;
+    }
+    
+    return false;
+}
+
+// Get current user's instance token
+function getCurrentInstanceToken() {
+    if (!isset($_SESSION['user_id'])) {
+        return null;
+    }
+    
+    if (!isset($_SESSION['instance_token'])) {
+        $_SESSION['instance_token'] = generateInstanceToken($_SESSION['user_id']);
+    }
+    
+    return $_SESSION['instance_token'];
+}
+
+// Validate instance token
+function validateInstanceToken($token) {
+    if (empty($token)) {
+        return false;
+    }
+    
+    $adminDb = getAdminDB();
+    $stmt = $adminDb->prepare("SELECT user_id FROM user_instance_tokens WHERE instance_token = ? AND is_active = 1 AND expires_at > NOW()");
+    $stmt->bind_param("s", $token);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    return $result->num_rows > 0;
 }
 
 // Check if user is authenticated
@@ -148,6 +206,11 @@ function isAuthenticated() {
             $stmt = $adminDb->prepare("UPDATE user_sessions SET last_activity = CURRENT_TIMESTAMP WHERE session_token = ?");
             $stmt->bind_param("s", $_SESSION['session_token']);
             $stmt->execute();
+        }
+        
+        // Ensure user has valid instance token
+        if (!isset($_SESSION['instance_token']) || !validateInstanceToken($_SESSION['instance_token'])) {
+            $_SESSION['instance_token'] = generateInstanceToken($_SESSION['user_id']);
         }
         
         return true;
@@ -250,6 +313,12 @@ function authenticateUser($username, $password) {
             return ['success' => false, 'message' => 'Failed to create session.'];
         }
         
+        // Generate instance token
+        $instanceToken = generateInstanceToken($user['id']);
+        if (!$instanceToken) {
+            return ['success' => false, 'message' => 'Failed to create instance token.'];
+        }
+        
         // Update last login
         $stmt = $adminDb->prepare("UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?");
         $stmt->bind_param("i", $user['id']);
@@ -259,6 +328,7 @@ function authenticateUser($username, $password) {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
         $_SESSION['session_token'] = $sessionToken;
+        $_SESSION['instance_token'] = $instanceToken;
         $_SESSION['login_time'] = time();
         $_SESSION['last_activity'] = time();
         
@@ -268,7 +338,8 @@ function authenticateUser($username, $password) {
         logAuditEvent($user['id'], 'login', [
             'success' => true,
             'username' => $username,
-            'session_token' => substr($sessionToken, 0, 8) . '...'
+            'session_token' => substr($sessionToken, 0, 8) . '...',
+            'instance_token' => substr($instanceToken, 0, 8) . '...'
         ]);
         
         return ['success' => true, 'message' => 'Login successful'];
@@ -287,8 +358,16 @@ function logoutUser() {
         $stmt->bind_param("s", $_SESSION['session_token']);
         $stmt->execute();
         
+        // Deactivate instance token
+        if (isset($_SESSION['instance_token'])) {
+            $stmt = $adminDb->prepare("UPDATE user_instance_tokens SET is_active = 0 WHERE instance_token = ?");
+            $stmt->bind_param("s", $_SESSION['instance_token']);
+            $stmt->execute();
+        }
+        
         logAuditEvent($_SESSION['user_id'] ?? null, 'logout', [
-            'session_token' => substr($_SESSION['session_token'], 0, 8) . '...'
+            'session_token' => substr($_SESSION['session_token'], 0, 8) . '...',
+            'instance_token' => substr($_SESSION['instance_token'] ?? '', 0, 8) . '...'
         ]);
     }
     
@@ -322,6 +401,44 @@ function logChatbotInteraction($userId, $sessionId, $conversationId, $messageTyp
     return $adminDb->insert_id;
 }
 
+// Get or create conversation ID for session
+function getOrCreateConversationId($sessionId) {
+    $adminDb = getAdminDB();
+    
+    // Check if conversation exists for this session
+    $stmt = $adminDb->prepare("SELECT DISTINCT conversation_id FROM chatbot_conversations WHERE session_id = ? ORDER BY timestamp DESC LIMIT 1");
+    $stmt->bind_param("s", $sessionId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        return $result->fetch_assoc()['conversation_id'];
+    }
+    
+    // Create new conversation ID
+    return 'conv_' . $sessionId . '_' . time();
+}
+
+// Store command suggestion
+function storeCommandSuggestion($conversationId, $userId, $command, $description, $context = null) {
+    $adminDb = getAdminDB();
+    
+    $stmt = $adminDb->prepare("INSERT INTO command_suggestions (conversation_id, user_id, suggested_command, command_description, suggestion_context) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("sisss", $conversationId, $userId, $command, $description, $context);
+    $stmt->execute();
+    
+    return $adminDb->insert_id;
+}
+
+// Mark command suggestion as executed
+function markSuggestionExecuted($suggestionId) {
+    $adminDb = getAdminDB();
+    
+    $stmt = $adminDb->prepare("UPDATE command_suggestions SET executed = 1, executed_at = CURRENT_TIMESTAMP WHERE id = ?");
+    $stmt->bind_param("i", $suggestionId);
+    $stmt->execute();
+}
+
 // Require authentication for protected pages
 function requireAuth() {
     if (!isAuthenticated()) {
@@ -331,6 +448,7 @@ function requireAuth() {
             unset($_SESSION['user_id']);
             unset($_SESSION['username']);
             unset($_SESSION['session_token']);
+            unset($_SESSION['instance_token']);
         }
         
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
