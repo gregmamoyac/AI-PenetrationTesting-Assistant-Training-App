@@ -268,7 +268,7 @@ $(document).ready(function() {
             
             // Handle disconnected active host
             if (activeHostId && currentRemoteSessionId) {
-                handleHostDisconnection();
+                handleHostGracefulDisconnection(activeHostId);
             }
             
             return;
@@ -611,12 +611,18 @@ $(document).ready(function() {
         
         // Reset active session if this was active
         if (sessionId === activeSessionId) {
-            const $remainingTabs = $('#session-tabs .tab');
+            const $remainingTabs = $('#session-tabs .tab:not([data-session="welcome"])');
             if ($remainingTabs.length > 0) {
                 const newSessionId = $($remainingTabs[0]).data('session');
                 switchToSession(newSessionId);
             } else {
+                // Always switch to welcome if no other sessions
                 switchToSession('welcome');
+                $('.tab[data-session="welcome"]').addClass('active');
+                $('#welcome-terminal').addClass('active');
+                activeSessionId = 'welcome';
+                activeHostId = null;
+                currentRemoteSessionId = null;
             }
         }
     }
@@ -1600,3 +1606,51 @@ window.GhostCrewTerminal = {
         $('#chat-messages').empty();
     }
 };
+
+// Function to handle host disconnection gracefully
+function handleHostGracefulDisconnection(hostId) {
+    // Mark host as disconnected in database
+    $.ajax({
+        url: 'api.php',
+        type: 'POST',
+        data: {
+            action: 'mark_host_disconnected',
+            host_id: hostId,
+            csrf_token: CSRF_TOKEN
+        },
+        dataType: 'json',
+        success: function(response) {
+            console.log('Host marked as disconnected:', hostId);
+        }
+    });
+    
+    // Update UI to show disconnected state
+    const $hostItem = $(`#host-list li[data-hostid="${hostId}"]`);
+    if ($hostItem.length) {
+        $hostItem.find('.host-status').removeClass('online').addClass('disconnected').text('● Disconnected');
+        $hostItem.addClass('disconnected-host');
+    }
+    
+    // Add disconnection message to terminal if active
+    if (activeHostId === hostId) {
+        const $terminal = $(`#${hostId}-terminal .terminal-output`);
+        if ($terminal.length && !$terminal.find('.connection-lost-message').length) {
+            $terminal.append(`
+                <div class="connection-lost-message">
+                    <p><i class="fas fa-plug"></i> Host disconnected gracefully</p>
+                    <p>The remote terminal was closed. This host will be removed from the active list.</p>
+                </div>
+            `);
+        }
+        
+        // Disable terminal input
+        $('#terminal-input').prop('disabled', true);
+        $('#send-command').prop('disabled', true);
+        
+        // End the session
+        if (currentRemoteSessionId) {
+            endSession(currentRemoteSessionId);
+            currentRemoteSessionId = null;
+        }
+    }
+}

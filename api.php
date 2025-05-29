@@ -107,6 +107,10 @@ switch ($action) {
     case 'log_terminal_clear':
         logTerminalClear();
         break;
+
+    case 'mark_host_disconnected':
+        markHostDisconnected();
+        break;
         
     default:
         echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
@@ -177,16 +181,23 @@ function registerHost() {
         }
     }
     
-    // Check if the host already exists in the main database
-    $stmt = $conn->prepare("SELECT id FROM hosts WHERE host_id = ?");
-    $stmt->bind_param("s", $hostId);
+    // Check if the host already exists (by host_id, hostname, or IP)
+    $stmt = $conn->prepare("SELECT id, host_id FROM hosts WHERE host_id = ? OR (hostname = ? AND ip_address = ?)");
+    $stmt->bind_param("sss", $hostId, $hostname, $ipAddress);
     $stmt->execute();
     $result = $stmt->get_result();
     
     if ($result->num_rows > 0) {
-        // Update existing host
+        // Get existing host info
+        $existingHost = $result->fetch_assoc();
+        $actualHostId = $existingHost['host_id'];
+        
+        // Update existing host with latest info
         $stmt = $conn->prepare("UPDATE hosts SET hostname = ?, ip_address = ?, os_info = ?, connected = 1, last_seen = CURRENT_TIMESTAMP WHERE host_id = ?");
-        $stmt->bind_param("ssss", $hostname, $ipAddress, $osInfo, $hostId);
+        $stmt->bind_param("ssss", $hostname, $ipAddress, $osInfo, $actualHostId);
+        
+        // Use the existing host_id for response
+        $hostId = $actualHostId;
     } else {
         // Insert new host
         $stmt = $conn->prepare("INSERT INTO hosts (host_id, hostname, ip_address, os_info) VALUES (?, ?, ?, ?)");
@@ -278,13 +289,17 @@ function getHosts() {
     }
     
     // Get hosts mapped to this user's instance token
-    $sql = "SELECT h.*, him.mapped_at 
+    $sql = "SELECT h.*, him.mapped_at,
+               CASE WHEN h.last_seen > DATE_SUB(NOW(), INTERVAL 2 MINUTE) THEN 'online'
+                    WHEN h.last_seen > DATE_SUB(NOW(), INTERVAL 5 MINUTE) THEN 'delayed'
+                    ELSE 'disconnected' END as connection_status
             FROM hosts h 
             LEFT JOIN host_instance_mappings him ON h.host_id = him.host_id 
             WHERE h.connected = 1 
-            AND h.last_seen > DATE_SUB(NOW(), INTERVAL 5 MINUTE)
+            AND h.last_seen > DATE_SUB(NOW(), INTERVAL 10 MINUTE)
             AND (him.instance_token = ? AND him.is_active = 1 AND him.expires_at > NOW())
-            ORDER BY h.last_seen DESC";
+            GROUP BY h.host_id
+            ORDER BY h.connected DESC, h.last_seen DESC";
     
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $instanceToken);
@@ -1039,6 +1054,48 @@ function logTerminalClear() {
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Failed to log terminal clear']);
     }
+}
+
+// Function to mark a host as disconnected
+function markHostDisconnected() {
+    $user = getCurrentUser();
+    if (!$user) {
+        echo json_encode(['status' => 'error', 'message' => 'Authentication required']);
+        return;
+    }
+    
+    $hostId = isset($_POST['host_id']) ? sanitize($_POST['host_id']) : '';
+    
+    if (empty($hostId)) {
+        echo json_encode(['status' => 'error', 'message' => 'Host ID is required']);
+        return;
+    }
+    
+    global $conn;
+    
+    // Mark host as disconnected
+    $stmt = $conn->prepare("UPDATE hosts SET connected = 0, last_seen = CURRENT_TIMESTAMP WHERE host_id = ?");
+    $stmt->bind_param("s", $hostId);
+    
+    if ($stmt->execute()) {
+        // Also update admin database
+        $adminDb = getAdminDB();
+        $adminStmt = $adminDb->prepare("UPDATE hosts_info SET is_active = 0, last_seen = CURRENT_TIMESTAMP WHERE host_id = ?");
+        $adminStmt->bind_param("s", $hostId);
+        $adminStmt->execute();
+        
+        // Log audit event
+        logAuditEvent($user['id'], 'system_access', [
+            'action' => 'host_disconnected',
+            'host_id' => $hostId
+        ]);
+        
+        echo json_encode(['status' => 'success', 'message' => 'Host marked as disconnected']);
+    } else {
+        echo json_encode(['status' => 'error', 'message' => 'Failed to mark host as disconnected']);
+    }
+    
+    $stmt->close();
 }
 
 ?>

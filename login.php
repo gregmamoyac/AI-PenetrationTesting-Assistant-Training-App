@@ -243,7 +243,7 @@ $redirect = $_GET['redirect'] ?? $_POST['redirect'] ?? 'index.php';
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
         <div class="login-container">
             <div class="login-header">
                 <h1>GhostCrew</h1>
