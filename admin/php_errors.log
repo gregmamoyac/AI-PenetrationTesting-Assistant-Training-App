@@ -25,3 +25,27 @@ Stack trace:
 [17-Jun-2025 04:49:31 Europe/Berlin] Query date range: 2025-06-03 to 2025-06-17
 [17-Jun-2025 04:49:31 Europe/Berlin] Total sessions in DB: 24, Latest: 2025-06-16 21:35:57
 [17-Jun-2025 04:49:31 Europe/Berlin] Activity data: [{"date":"2025-06-12","active_users":1,"sessions":5,"commands":13},{"date":"2025-06-16","active_users":1,"sessions":1,"commands":3}]
+[24-Jun-2025 08:06:27 Europe/Berlin] handleEnhancedReports called with params: {"action":"reports","start_date":"2025-05-25","end_date":"2025-06-24","user_role":""}
+[24-Jun-2025 08:06:28 Europe/Berlin] Query date range: 2025-06-10 to 2025-06-24
+[24-Jun-2025 08:06:28 Europe/Berlin] Total sessions in DB: 29, Latest: 2025-06-24 00:58:23
+[24-Jun-2025 08:06:28 Europe/Berlin] Activity data: [{"date":"2025-06-12","active_users":1,"sessions":5,"commands":13},{"date":"2025-06-16","active_users":1,"sessions":1,"commands":3},{"date":"2025-06-23","active_users":1,"sessions":4,"commands":5},{"date":"2025-06-24","active_users":1,"sessions":1,"commands":6}]
+[24-Jun-2025 08:06:32 Europe/Berlin] handleEnhancedReports called with params: {"action":"reports","start_date":"2025-05-25","end_date":"2025-06-24","user_role":""}
+[24-Jun-2025 08:06:32 Europe/Berlin] Query date range: 2025-06-10 to 2025-06-24
+[24-Jun-2025 08:06:32 Europe/Berlin] Total sessions in DB: 29, Latest: 2025-06-24 00:58:23
+[24-Jun-2025 08:06:32 Europe/Berlin] Activity data: [{"date":"2025-06-12","active_users":1,"sessions":5,"commands":13},{"date":"2025-06-16","active_users":1,"sessions":1,"commands":3},{"date":"2025-06-23","active_users":1,"sessions":4,"commands":5},{"date":"2025-06-24","active_users":1,"sessions":1,"commands":6}]
+[24-Jun-2025 08:06:32 Europe/Berlin] handleEnhancedReports called with params: {"action":"reports","start_date":"2025-05-25","end_date":"2025-06-24","user_role":""}
+[24-Jun-2025 08:06:32 Europe/Berlin] Query date range: 2025-06-10 to 2025-06-24
+[24-Jun-2025 08:06:33 Europe/Berlin] Total sessions in DB: 29, Latest: 2025-06-24 00:58:23
+[24-Jun-2025 08:06:33 Europe/Berlin] Activity data: [{"date":"2025-06-12","active_users":1,"sessions":5,"commands":13},{"date":"2025-06-16","active_users":1,"sessions":1,"commands":3},{"date":"2025-06-23","active_users":1,"sessions":4,"commands":5},{"date":"2025-06-24","active_users":1,"sessions":1,"commands":6}]
+[24-Jun-2025 08:35:06 Europe/Berlin] handleEnhancedReports called with params: {"action":"reports","start_date":"2025-05-25","end_date":"2025-06-24","user_role":""}
+[24-Jun-2025 08:35:06 Europe/Berlin] Query date range: 2025-06-10 to 2025-06-24
+[24-Jun-2025 08:35:06 Europe/Berlin] Total sessions in DB: 30, Latest: 2025-06-24 01:17:24
+[24-Jun-2025 08:35:06 Europe/Berlin] Activity data: [{"date":"2025-06-12","active_users":1,"sessions":5,"commands":13},{"date":"2025-06-16","active_users":1,"sessions":1,"commands":3},{"date":"2025-06-23","active_users":1,"sessions":4,"commands":5},{"date":"2025-06-24","active_users":1,"sessions":2,"commands":6}]
+[24-Jun-2025 08:36:03 Europe/Berlin] handleEnhancedReports called with params: {"action":"reports","start_date":"2025-05-25","end_date":"2025-06-24","user_role":""}
+[24-Jun-2025 08:36:03 Europe/Berlin] Query date range: 2025-06-10 to 2025-06-24
+[24-Jun-2025 08:36:03 Europe/Berlin] Total sessions in DB: 30, Latest: 2025-06-24 01:17:24
+[24-Jun-2025 08:36:03 Europe/Berlin] Activity data: [{"date":"2025-06-12","active_users":1,"sessions":5,"commands":13},{"date":"2025-06-16","active_users":1,"sessions":1,"commands":3},{"date":"2025-06-23","active_users":1,"sessions":4,"commands":5},{"date":"2025-06-24","active_users":1,"sessions":2,"commands":6}]
+[24-Jun-2025 08:36:13 Europe/Berlin] handleEnhancedReports called with params: {"action":"reports","start_date":"2025-05-25","end_date":"2025-06-24","user_role":""}
+[24-Jun-2025 08:36:13 Europe/Berlin] Query date range: 2025-06-10 to 2025-06-24
+[24-Jun-2025 08:36:13 Europe/Berlin] Total sessions in DB: 30, Latest: 2025-06-24 01:17:24
+[24-Jun-2025 08:36:13 Europe/Berlin] Activity data: [{"date":"2025-06-12","active_users":1,"sessions":5,"commands":13},{"date":"2025-06-16","active_users":1,"sessions":1,"commands":3},{"date":"2025-06-23","active_users":1,"sessions":4,"commands":5},{"date":"2025-06-24","active_users":1,"sessions":2,"commands":6}]
