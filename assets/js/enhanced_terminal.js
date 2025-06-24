@@ -905,7 +905,7 @@ $(document).ready(function() {
         
         // Send to server
         $.ajax({
-            url: 'api.php',
+            url: 'http://localhost:8090/chat',
             type: 'POST',
             data: {
                 action: 'chat_message',
