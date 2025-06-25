@@ -765,7 +765,7 @@ window||this,t=G&&F[typeof module]&&module&&!module.nodeType&&"object"==typeof g
                 
                 // Execute command and capture output using WScript.Shell.Exec
                 try {
-                    var exec = SESSION.shellProcess.Exec("cmd.exe /c \"" + fullCommand + "\"");
+                    var exec = SESSION.shellProcess.Exec("cmd.exe /C \"" + fullCommand + "\"");
                     
                     // Wait for command to complete and read output
                     var output = "";
