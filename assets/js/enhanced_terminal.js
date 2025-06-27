@@ -17,6 +17,7 @@ $(document).ready(function() {
     let currentConversationId = null;
     let chatInitialized = false;
     let lastCommandSent = null;
+    let chat_server = 'http://192.168.1.171:8090/chat'
     
     // Initialize the application
     initApp();
@@ -500,7 +501,7 @@ $(document).ready(function() {
         commandHistory = sessionCommandHistories[sessionId] || [];
         
         // Update terminal prompt
-        updateTerminalPrompt('C:\\>');
+        updateTerminalPrompt('>');
         
         // Load any existing command history for this session
         loadCommandHistory(sessionId);
@@ -569,7 +570,7 @@ $(document).ready(function() {
         // Add command history
         commands.forEach(function(cmd) {
             terminalHtml += `<div class="command-entry">
-                <div class="prompt-line">C:\\> ${escapeHtml(cmd.command)}</div>`;
+                <div class="prompt-line">> ${escapeHtml(cmd.command)}</div>`;
             
             if (cmd.output) {
                 terminalHtml += `<div class="result">${escapeHtml(cmd.output)}</div>`;
@@ -746,7 +747,7 @@ $(document).ready(function() {
             commandHistory = sessionCommands;
         }
         
-        let lastWorkingDir = 'C:\\>';
+        let lastWorkingDir = '>';
         
         // Add each command and its output to the terminal
         $.each(commands, function(index, cmd) {
@@ -922,7 +923,7 @@ $(document).ready(function() {
         
         // Send to server
         $.ajax({
-            url: 'http://localhost:8090/chat',
+            url: chat_server,
             type: 'POST',
             data: {
                 action: 'chat_message',

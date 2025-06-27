@@ -648,6 +648,103 @@ header h1::before {
     transform: scale(1.1);
 }
 
+.connection-os-tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ddd;
+}
+
+.connection-tab-button {
+    background: none;
+    border: none;
+    padding: 12px 24px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #666;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.connection-tab-button:hover {
+    color: #333;
+    background-color: #f5f5f5;
+}
+
+.connection-tab-button.active {
+    color: #007cba;
+    border-bottom-color: #007cba;
+    font-weight: 600;
+}
+
+.connection-tab-content {
+    display: none;
+}
+
+.connection-tab-content.active {
+    display: block;
+}
+
+.connection-setup-command {
+    display: flex;
+    align-items: center;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 12px;
+    margin: 10px 0;
+}
+
+.connection-setup-command code {
+    flex: 1;
+    background: none;
+    border: none;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    color: #333;
+    word-break: break-all;
+}
+
+.connection-setup-command button {
+    background: #007cba;
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.connection-setup-command button:hover {
+    background: #005a87;
+}
+
+.connection-download-section {
+    margin: 15px 0;
+}
+
+.connection-download-button {
+    display: inline-flex;
+    align-items: center;
+    background: #28a745;
+    color: white;
+    text-decoration: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.connection-download-button:hover {
+    background: #218838;
+    text-decoration: none;
+    color: white;
+}
+
+.connection-download-button i {
+    margin-right: 8px;
+}
+
 /* Historical sessions section */
 .historical-sessions {
     margin-top: 20px;
