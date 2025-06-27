@@ -1672,3 +1672,89 @@ function handleHostGracefulDisconnection(hostId) {
         }
     }
 }
+
+function showTab(tabName) {
+    // Hide all tab contents
+    const tabContents = document.querySelectorAll('.connection-tab-content');
+    tabContents.forEach(tab => tab.classList.remove('active'));
+    
+    // Remove active class from all buttons
+    const tabButtons = document.querySelectorAll('.connection-tab-button');
+    tabButtons.forEach(button => button.classList.remove('active'));
+    
+    // Show selected tab
+    document.getElementById(tabName + '-tab').classList.add('active');
+    
+    // Add active class to clicked button
+    event.target.classList.add('active');
+}
+
+function copyToClipboard(elementId, buttonElement) {
+    const text = document.getElementById(elementId).textContent;
+    const button = buttonElement || document.querySelector(`button[onclick*="${elementId}"]`);
+    
+    // Function to show visual feedback
+    function showFeedback(success = true) {
+        if (button) {
+            const originalHTML = button.innerHTML;
+            const originalBackground = button.style.background || getComputedStyle(button).background;
+            
+            button.innerHTML = success ? '<i class="fas fa-check"></i>' : '<i class="fas fa-times"></i>';
+            button.style.background = success ? 'var(--accent-green)' : '#dc3545';
+            
+            setTimeout(() => {
+                button.innerHTML = originalHTML;
+                button.style.background = originalBackground;
+            }, 2000);
+        }
+    }
+    
+    // Try modern clipboard API first
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => {
+            showFeedback(true);
+        }).catch(err => {
+            console.warn('Clipboard API failed, trying fallback:', err);
+            fallbackCopy();
+        });
+    } else {
+        // Use fallback method
+        fallbackCopy();
+    }
+    
+    function fallbackCopy() {
+        try {
+            // Create a temporary textarea element
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            
+            // Select and copy the text
+            textArea.focus();
+            textArea.select();
+            
+            // For mobile compatibility
+            textArea.setSelectionRange(0, 99999);
+            
+            const successful = document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            if (successful) {
+                showFeedback(true);
+            } else {
+                throw new Error('execCommand failed');
+            }
+        } catch (err) {
+            console.error('All copy methods failed:', err);
+            showFeedback(false);
+            
+            // Last resort: show a prompt with the text
+            if (confirm('Copy failed. Click OK to show the command in a dialog box so you can copy it manually.')) {
+                prompt('Copy this command:', text);
+            }
+        }
+    }
+}

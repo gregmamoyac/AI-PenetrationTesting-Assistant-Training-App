@@ -21,7 +21,7 @@ $csrfToken = generateCSRFToken();
 // Get setup command with instance token
 $instanceToken = getCurrentInstanceToken();
 $WindowssetupCommand = "mshta \"" . APP_URL . "/local/autoconnect.hta?token=" . urlencode($instanceToken) . "\"";
-$LinuxsetupCommand = "wget -qO- \"" . APP_URL . "/local/autoconnect.py?token=" . urlencode($instanceToken) . "\" | bash";
+$LinuxsetupCommand = "curl -O \"" . APP_URL . "/local/autoconnect.py\" && python3 autoconnect.py --token " . urlencode($instanceToken);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -63,78 +63,33 @@ $LinuxsetupCommand = "wget -qO- \"" . APP_URL . "/local/autoconnect.py?token=" .
                 </ul>
                 <div class="connection-setup">
                     <h3>Setup Instructions</h3>
-                    <p>To connect a new host, select your operating system and follow the instructions:</p>
-                    
-                    <div class="os-tabs">
-                        <button class="tab-button active" onclick="showTab('windows')">Windows</button>
-                        <button class="tab-button" onclick="showTab('linux')">Linux</button>
+                    <p>To connect a new host, select your operating system and run the provided command in an administrator or root terminal:</p>
+                    <div class="connection-os-tabs">
+                        <button class="connection-tab-button active" onclick="showTab('windows')">Windows</button>
+                        <button class="connection-tab-button" onclick="showTab('linux')">Linux</button>
                     </div>
-                    <div id="windows-tab" class="tab-content active">
-                        <p>Run this command in PowerShell or Command Prompt:</p>
-                        <div class="setup-command">
+                    <div id="windows-tab" class="connection-tab-content active">
+                        <div class="connection-setup-command">
                             <code id="windows-command-text"><?php echo htmlspecialchars($WindowssetupCommand); ?></code>
-                            <button onclick="copyToClipboard('windows-command-text')" title="Copy to clipboard">
+                            <button onclick="copyToClipboard('windows-command-text', this)" title="Copy to clipboard">
                                 <i class="fas fa-copy"></i>
                             </button>
                         </div>
                     </div>
-                    <div id="linux-tab" class="tab-content">
-                        <p>First, download the setup script:</p>
-                        <div class="download-section">
-                            <a href="/local/autoconnect.py" download class="download-button">
-                                <i class="fas fa-download"></i> Download autoconnect.py
+                    <div id="linux-tab" class="connection-tab-content">
+                        <!-- <p>Download setup script:</p>
+                        <div class="connection-download-section">
+                            <a href="local/autoconnect.py" download class="connection-download-button">
+                                <i class="fas fa-download"></i> autoconnect.py
                             </a>
-                        </div>
-                        <p>Then run this command in your terminal:</p>
-                        <div class="setup-command">
+                        </div> -->
+                        <div class="connection-setup-command">
                             <code id="linux-command-text"><?php echo htmlspecialchars($LinuxsetupCommand); ?></code>
-                            <button onclick="copyToClipboard('linux-command-text')" title="Copy to clipboard">
+                            <button onclick="copyToClipboard('linux-command-text', this)" title="Copy to clipboard">
                                 <i class="fas fa-copy"></i>
                             </button>
                         </div>
                     </div>
-                    <script>
-                    function showTab(tabName) {
-                        // Hide all tab contents
-                        const tabContents = document.querySelectorAll('.connection-tab-content');
-                        tabContents.forEach(tab => tab.classList.remove('active'));
-                        
-                        // Remove active class from all buttons
-                        const tabButtons = document.querySelectorAll('.connection-tab-button');
-                        tabButtons.forEach(button => button.classList.remove('active'));
-                        
-                        // Show selected tab
-                        document.getElementById(tabName + '-tab').classList.add('active');
-                        
-                        // Add active class to clicked button
-                        event.target.classList.add('active');
-                    }
-
-                    function copyToClipboard(elementId) {
-                        const text = document.getElementById(elementId).textContent;
-                        navigator.clipboard.writeText(text).then(() => {
-                            // Visual feedback
-                            const button = event.target.closest('button');
-                            const originalHTML = button.innerHTML;
-                            button.innerHTML = '<i class="fas fa-check"></i>';
-                            button.style.background = '#28a745';
-                            
-                            setTimeout(() => {
-                                button.innerHTML = originalHTML;
-                                button.style.background = '#007cba';
-                            }, 2000);
-                        }).catch(err => {
-                            console.error('Failed to copy text: ', err);
-                            // Fallback for older browsers
-                            const textArea = document.createElement('textarea');
-                            textArea.value = text;
-                            document.body.appendChild(textArea);
-                            textArea.select();
-                            document.execCommand('copy');
-                            document.body.removeChild(textArea);
-                        });
-                    }   
-                    </script>
                 </div>
                 <div class="historical-sessions">
                     <h3>Historical Sessions</h3>

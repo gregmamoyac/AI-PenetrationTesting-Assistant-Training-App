@@ -648,10 +648,22 @@ header h1::before {
     transform: scale(1.1);
 }
 
+.connection-setup {
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(88, 166, 255, 0.05);
+    border-radius: 10px;
+    border: 1px solid rgba(88, 166, 255, 0.2);
+}
+
+.connection-setup h3::before {
+    content: "⚙️";
+}
+
 .connection-os-tabs {
     display: flex;
     margin-bottom: 20px;
-    border-bottom: 2px solid #ddd;
+    border-bottom: 2px solid rgba(88, 166, 255, 0.2);
 }
 
 .connection-tab-button {
@@ -667,12 +679,12 @@ header h1::before {
 
 .connection-tab-button:hover {
     color: #333;
-    background-color: #f5f5f5;
+    background-color: rgba(88, 166, 255, 0.1);
 }
 
 .connection-tab-button.active {
-    color: #007cba;
-    border-bottom-color: #007cba;
+    color: rgba(88, 166, 255, 1);
+    border-bottom-color: rgba(88, 166, 255, 1);
     font-weight: 600;
 }
 
@@ -685,38 +697,41 @@ header h1::before {
 }
 
 .connection-setup-command {
-    display: flex;
-    align-items: center;
-    background-color: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 6px;
-    padding: 12px;
-    margin: 10px 0;
+    background: var(--primary-dark);
+    padding: 16px;
+    border-radius: 10px;
+    margin-top: 12px;
+    position: relative;
+    border: 1px solid var(--border-color);
+    font-family: 'JetBrains Mono', monospace;
 }
 
 .connection-setup-command code {
-    flex: 1;
+    display: block;
+    word-break: break-all;
+    color: var(--accent-green);
+    font-size: 0.9rem;
     background: none;
     border: none;
-    font-family: 'Courier New', monospace;
-    font-size: 14px;
-    color: #333;
-    word-break: break-all;
 }
 
 .connection-setup-command button {
-    background: #007cba;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: var(--accent-blue);
     border: none;
     color: white;
-    padding: 8px 12px;
-    border-radius: 4px;
     cursor: pointer;
-    margin-left: 10px;
-    transition: background-color 0.3s ease;
+    font-size: 1rem;
+    padding: 8px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
 }
 
 .connection-setup-command button:hover {
-    background: #005a87;
+    background: rgba(88, 166, 255, 0.8);
+    transform: scale(1.1);
 }
 
 .connection-download-section {
@@ -726,19 +741,21 @@ header h1::before {
 .connection-download-button {
     display: inline-flex;
     align-items: center;
-    background: #28a745;
+    background: var(--accent-green);
     color: white;
     text-decoration: none;
     padding: 10px 16px;
-    border-radius: 6px;
+    border-radius: 10px;
     font-weight: 500;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(88, 166, 255, 0.2);
 }
 
 .connection-download-button:hover {
-    background: #218838;
+    background: rgba(88, 166, 255, 0.8);
     text-decoration: none;
     color: white;
+    transform: scale(1.05);
 }
 
 .connection-download-button i {

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
 GhostCrew Terminal Client v4.0 - Linux Version
-Compatible with the Windows HTA client API
 """
 
 import os
@@ -26,7 +25,7 @@ class GhostCrewClient:
     def __init__(self):
         # Configuration
         self.config = {
-            'SERVER_URL': 'http://localhost/GhostCrew/api.php',
+            'SERVER_URL': 'http://192.168.1.171/GhostCrew/api.php',
             'POLL_INTERVAL': 1.5,
             'PING_INTERVAL': 30.0,
             'AUTO_RECONNECT': True,
