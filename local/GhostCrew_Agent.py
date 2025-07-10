@@ -500,9 +500,18 @@ class CrossPlatformCommandClient:
                 if pty_process.isalive():
                     data = pty_process.read(timeout=500)  # 500ms timeout
                     if data:
-                        output_chunks.append(data)
-                        print(f"Received {len(data)} chars: {repr(data[:100])}")
-                        self.last_output_time = time.time()
+                        # Clean up ANSI escape sequences for better terminal display
+                        import re
+                        ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]|\x1B[@-_]')
+                        cleaned_data = ansi_escape.sub('', data)
+                        
+                        # Also clean up common terminal control characters
+                        cleaned_data = re.sub(r'[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]', '', cleaned_data)
+                        
+                        if cleaned_data:
+                            output_chunks.append(cleaned_data)
+                            print(f"Received {len(cleaned_data)} chars: {repr(cleaned_data[:100])}")
+                            self.last_output_time = time.time()
                 else:
                     break
                 
@@ -554,10 +563,20 @@ class CrossPlatformCommandClient:
                         if data is None:
                             data = raw_data.decode('utf-8', errors='replace')
                         
+                        # Clean up ANSI escape sequences for better terminal display
                         if data:
-                            output_chunks.append(data)
-                            print(f"Received {len(data)} chars: {repr(data[:100])}")
-                            self.last_output_time = time.time()
+                            import re
+                            # Remove ANSI color codes and cursor control sequences
+                            ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]|\x1B[@-_]')
+                            cleaned_data = ansi_escape.sub('', data)
+                            
+                            # Also clean up common terminal control characters
+                            cleaned_data = re.sub(r'[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]', '', cleaned_data)
+                            
+                            if cleaned_data:
+                                output_chunks.append(cleaned_data)
+                                print(f"Received {len(cleaned_data)} chars: {repr(cleaned_data[:100])}")
+                                self.last_output_time = time.time()
                     except OSError as e:
                         print(f"PTY read error: {e}")
                         break

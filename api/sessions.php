@@ -390,4 +390,4 @@ function logTerminalClear() {
         echo json_encode(['status' => 'error', 'message' => 'Failed to log terminal clear']);
     }
 }
-
+?>

@@ -458,7 +458,7 @@ function handleGetStreamingStatus() {
                     TIMESTAMPDIFF(SECOND, ss.start_time, NOW()) as duration_seconds
              FROM streaming_sessions ss
              JOIN command_history ch ON ss.command_id = ch.id
-             WHERE ss.session_id = ? AND ss.status IN ('active', 'paused')
+             WHERE ss.session_id = ? AND ss.status IN ('active')
              ORDER BY ss.last_activity DESC"
         );
         $stmt->bind_param("s", $sessionId);

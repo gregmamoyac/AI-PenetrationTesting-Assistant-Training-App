@@ -332,8 +332,14 @@ $(document).ready(function() {
             }
 
             if (isPartial) {
-                // For partial updates, replace content (server sends cumulative output)
-                $pre.html(escapeHtml(output));
+                // For partial updates, append new content instead of replacing all
+                const currentContent = $pre.html();
+                const newContent = escapeHtml(output);
+                
+                // Only update if the new content is different and longer
+                if (newContent.length > currentContent.replace(/<[^>]*>/g, '').length) {
+                    $pre.html(newContent);
+                }
             } else {
                 // For final updates, replace all content and mark as completed
                 $pre.html(escapeHtml(output));
@@ -511,51 +517,31 @@ $(document).ready(function() {
             // Get current content
             let currentContent = $pre.html();
             
-            // Show the command as if it was typed in the interactive session
-            const currentPrompt = $('#terminal-prompt').text();
+            // Use a simple interactive prompt instead of the working directory prompt
+            const interactivePrompt = getInteractivePrompt(currentStreamingCommandId);
             const displayInput = isControl ? `<span class="control-input">[${input}]</span>` : escapeHtml(input);
             
             // Append the new input to existing content
             const newLine = currentContent ? '\n' : '';
-            $pre.html(currentContent + newLine + currentPrompt + ' ' + displayInput);
+            $pre.html(currentContent + newLine + interactivePrompt + ' ' + displayInput);
             
             scrollToBottom($terminal[0]);
         }
     }
-    
-    function terminateStreamingCommand() {
-        if (!isStreamingMode || !currentStreamingCommandId) {
-            return;
+
+    // Add this helper function if it doesn't exist
+    function getInteractivePrompt(commandId) {
+        const $commandEntry = $(`.command-entry[data-command-id="${commandId}"]`);
+        if ($commandEntry.length > 0) {
+            const commandText = $commandEntry.find('.prompt-line').text();
+            // Extract just the command name (first word after the >)
+            const commandMatch = commandText.match(/>\s*(\w+)/);
+            if (commandMatch) {
+                const commandName = commandMatch[1];
+                return commandName + '>';
+            }
         }
-        
-        if (confirm('Are you sure you want to terminate the interactive command?')) {
-            // Send Ctrl+C
-            $.ajax({
-                url: 'api.php',
-                type: 'POST',
-                data: {
-                    action: 'send_user_input',
-                    session_id: currentRemoteSessionId,
-                    host_id: activeHostId,
-                    input: String.fromCharCode(3), // Ctrl+C
-                    csrf_token: CSRF_TOKEN
-                },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.status === 'success') {
-                        showInputEcho('^C', true);
-                    }
-                }
-            });
-            
-            // Force disable streaming mode after a delay
-            setTimeout(function() {
-                if (isStreamingMode) {
-                    disableStreamingMode();
-                    showNotification('Interactive command terminated', 'warning');
-                }
-            }, 3000);
-        }
+        return 'interactive>';
     }
     
     // ===========================================
@@ -780,35 +766,133 @@ $(document).ready(function() {
         
         // Check if we're in streaming mode - send as user input instead
         if (isStreamingMode && currentStreamingCommandId) {
-            // Send as interactive input
+            // First check if the streaming session is actually still active
             $.ajax({
                 url: 'api.php',
                 type: 'POST',
                 data: {
-                    action: 'send_user_input',
+                    action: 'get_streaming_status',
                     session_id: currentRemoteSessionId,
-                    host_id: activeHostId,
-                    input: command,
                     csrf_token: CSRF_TOKEN
                 },
                 dataType: 'json',
                 success: function(response) {
-                    if (response.status === 'success') {
-                        console.log('Sent interactive input:', command);
-                        // Show input echo in terminal
-                        showInputEcho(command);
+                    if (response.status === 'success' && response.active_sessions && response.active_sessions.length > 0) {
+                        // Check if our specific command is still active
+                        const activeSession = response.active_sessions.find(s => s.command_id == currentStreamingCommandId);
+                        if (activeSession && activeSession.status === 'active') {
+                            // Session is still active, send as interactive input
+                            sendInteractiveInput(command);
+                        } else {
+                            // Session is not active, disable streaming mode and send as regular command
+                            console.log('Streaming session ended, switching to normal mode');
+                            disableStreamingMode();
+                            sendRegularCommand(command);
+                        }
                     } else {
-                        showNotification('Failed to send input: ' + (response.message || 'Unknown error'), 'error');
+                        // No active sessions, disable streaming mode and send as regular command
+                        console.log('No active streaming sessions, switching to normal mode');
+                        disableStreamingMode();
+                        sendRegularCommand(command);
                     }
                 },
                 error: function() {
-                    showNotification('Network error while sending input', 'error');
+                    // On error, assume session ended and send as regular command
+                    console.log('Error checking streaming status, switching to normal mode');
+                    disableStreamingMode();
+                    sendRegularCommand(command);
                 }
             });
             return; // Don't execute the regular command sending
         }
 
         // Send the command to the server (normal mode)
+        $.ajax({
+            url: 'api.php',
+            type: 'POST',
+            data: {
+                action: 'send_command',
+                host_id: activeHostId,
+                session_id: currentRemoteSessionId,
+                command: command,
+                csrf_token: CSRF_TOKEN
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status === 'success') {
+                    const commandId = response.command_id;
+                    const isInteractive = response.is_interactive;
+                    
+                    console.log('Command sent successfully. ID:', commandId, 'Interactive:', isInteractive);
+                    
+                    // Add the command to the terminal immediately
+                    const $terminal = $(`#${activeHostId}-terminal .terminal-output`);
+                    const currentPrompt = $('#terminal-prompt').text().replace(/\\\\/g, '\\');
+
+                    let entryHtml = `<div class="command-entry" data-command-id="${commandId}">`;
+                    entryHtml += `<div class="prompt-line">${escapeHtml(currentPrompt)} ${escapeHtml(command)}</div>`;
+                    
+                    if (isInteractive) {
+                        entryHtml += `<div class="result streaming-output" data-command-id="${commandId}"><em>Starting interactive session...</em></div>`;
+                    } else {
+                        entryHtml += `<div class="result"><em>Executing...</em></div>`;
+                    }
+                    
+                    entryHtml += `</div>`;
+                    
+                    $terminal.append(entryHtml);
+                    scrollToBottom($terminal[0]);
+                    
+                    // Send command context to chatbot after a short delay
+                    setTimeout(() => {
+                        sendCommandContextToChat(command);
+                    }, 500);
+                    
+                } else if (response.redirect) {
+                    window.location.href = response.redirect;
+                } else {
+                    showNotification('Failed to send command: ' + response.message, 'error');
+                }
+            },
+            error: function(xhr) {
+                if (xhr.status === 401) {
+                    window.location.href = 'login.php';
+                } else {
+                    showNotification('Network error while sending command', 'error');
+                }
+            }
+        });
+    }
+
+    // Add these helper functions at the end of the enhanced_terminal.js file:
+    function sendInteractiveInput(command) {
+        $.ajax({
+            url: 'api.php',
+            type: 'POST',
+            data: {
+                action: 'send_user_input',
+                session_id: currentRemoteSessionId,
+                host_id: activeHostId,
+                input: command,
+                csrf_token: CSRF_TOKEN
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status === 'success') {
+                    console.log('Sent interactive input:', command);
+                    showInputEcho(command);
+                } else {
+                    showNotification('Failed to send input: ' + (response.message || 'Unknown error'), 'error');
+                }
+            },
+            error: function() {
+                showNotification('Network error while sending input', 'error');
+            }
+        });
+    }
+
+    function sendRegularCommand(command) {
+        // Move the existing regular command sending logic here
         $.ajax({
             url: 'api.php',
             type: 'POST',
@@ -923,8 +1007,11 @@ $(document).ready(function() {
         
         if (!$terminal.length) return;
         
-        // Clear existing command entries, but keep welcome message
-        $terminal.find('.command-entry').remove();
+        // Get existing command IDs to avoid duplicates
+        const existingCommandIds = new Set();
+        $terminal.find('.command-entry[data-command-id]').each(function() {
+            existingCommandIds.add(parseInt($(this).data('command-id')));
+        });
         
         // Sort commands by timestamp (oldest first)
         commands.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
@@ -939,8 +1026,25 @@ $(document).ready(function() {
         
         let lastWorkingDir = '>';
         
-        // Add each command and its output to the terminal
+        // Update working directory tracking for existing commands
+        $terminal.find('.command-entry[data-command-id]').each(function() {
+            const $entry = $(this);
+            const commandId = parseInt($entry.data('command-id'));
+            const matchingCommand = commands.find(cmd => parseInt(cmd.id) === commandId);
+            
+            if (matchingCommand && matchingCommand.working_directory) {
+                lastWorkingDir = matchingCommand.working_directory.endsWith('>') ? 
+                    matchingCommand.working_directory : matchingCommand.working_directory + '>';
+            }
+        });
+        
+        // Add only new commands to the terminal
         $.each(commands, function(index, cmd) {
+            // Skip if command already exists
+            if (existingCommandIds.has(parseInt(cmd.id))) {
+                return; // Skip this command
+            }
+            
             // Update working directory if available
             if (cmd.working_directory) {
                 lastWorkingDir = cmd.working_directory.endsWith('>') ? cmd.working_directory : cmd.working_directory + '>';
@@ -971,6 +1075,25 @@ $(document).ready(function() {
             entryHtml += `</div>`;
             
             $terminal.append(entryHtml);
+        });
+        
+        // Update existing commands that might have new output
+        $.each(commands, function(index, cmd) {
+            if (existingCommandIds.has(parseInt(cmd.id))) {
+                const $existingEntry = $terminal.find(`[data-command-id="${cmd.id}"]`);
+                const $existingResult = $existingEntry.find('.result');
+                
+                // Only update if there's new output or status change
+                if (cmd.output !== null) {
+                    if (cmd.is_interactive && cmd.status === 'executing') {
+                        $existingResult.html(`<pre>${escapeHtml(cmd.output || 'Interactive session running...')}</pre>`);
+                        $existingEntry.addClass('streaming-command');
+                    } else if (cmd.status === 'completed') {
+                        $existingResult.html(`<pre>${escapeHtml(cmd.output)}</pre>`);
+                        $existingEntry.removeClass('streaming-command').addClass('completed-command');
+                    }
+                }
+            }
         });
         
         // Update terminal prompt with last working directory
