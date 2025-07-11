@@ -10,10 +10,19 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
-define('ADMIN_DB_HOST', 'localhost');
-define('ADMIN_DB_USER', 'svc_ghostcrew_admin');
-define('ADMIN_DB_PASS', '!Password123!');
-define('ADMIN_DB_NAME', 'ghostcrew_admin');
+// Admin database configuration
+if (!defined('ADMIN_DB_HOST')) {
+    define('ADMIN_DB_HOST', 'gc-admin.cyjo80kgwf8g.us-east-1.rds.amazonaws.com');
+}
+if (!defined('ADMIN_DB_USER')) {
+    define('ADMIN_DB_USER', 'gc_admin_34yVbZL');
+}
+if (!defined('ADMIN_DB_PASS')) {
+    define('ADMIN_DB_PASS', 'Aof^Hy4Z%qgHk}CjXV0):Vy]xpcPJ=+');
+}
+if (!defined('ADMIN_DB_NAME')) {
+    define('ADMIN_DB_NAME', 'ghostcrew_admin');
+}
 
 // Database configuration
 $host = ADMIN_DB_HOST;
