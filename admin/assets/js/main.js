@@ -2428,6 +2428,20 @@ async function loadGradingContent(sessionId) {
                     <p><strong>Commands Executed:</strong> ${commands.length}</p>
                     <p><strong>Chat Interactions:</strong> ${conversations.length}</p>
                     
+                    ${data.ai_summary ? `
+                    <div class="ai-summary-section">
+                        <h4>Session Summary</h4>
+                        <div class="ai-summary-content">
+                            <div class="ai-summary-text">${data.ai_summary.ai_summary}</div>
+                            <div class="ai-summary-meta">
+                                <small>Generated on ${formatDate(data.ai_summary.summary_generated_at)} | 
+                                Commands analyzed: ${data.ai_summary.command_count} | 
+                                Duration: ${Math.round(data.ai_summary.session_duration || 0)} minutes</small>
+                            </div>
+                        </div>
+                    </div>
+                    ` : ''}
+                    
                     ${existingFeedback && isOperatorViewing ? `
                         <div class="feedback-display">
                             <h4>📊 Your Grade</h4>
@@ -2798,6 +2812,7 @@ async function viewSessionDetailPage(sessionId) {
             const user = currentData.users.find(u => parseInt(u.id) === parseInt(session.user_id));
             const commands = data.commands;
             const conversations = data.conversations || [];
+            const aiSummary = data.ai_summary;
             
             // Create chronological timeline
             const timeline = [];
@@ -2827,6 +2842,20 @@ async function viewSessionDetailPage(sessionId) {
             const viewerLabel = isOwnSession ? 'Your' : (user ? user.full_name + "'s" : 'Unknown User');
             
             const content = `
+                ${aiSummary ? `
+                <div class="ai-summary-section">
+                    <h4>🤖 AI Session Summary</h4>
+                    <div class="ai-summary-content">
+                        <div class="ai-summary-text">${aiSummary.ai_summary}</div>
+                        <div class="ai-summary-meta">
+                            <small>Generated on ${formatDate(aiSummary.summary_generated_at)} | 
+                            Commands analyzed: ${aiSummary.command_count} | 
+                            Duration: ${Math.round(aiSummary.session_duration || 0)} minutes</small>
+                        </div>
+                    </div>
+                </div>
+                ` : ''}
+                
                 <div class="session-info">
                     <h4>${viewerLabel} Session Information</h4>
                     <p><strong>Session ID:</strong> ${session.session_id}</p>
@@ -4112,6 +4141,7 @@ function toggleApiKeyVisibility() {
 // ====================
 
 // Inject AI settings styles when document loads
+// Updated CSS injection for AI settings (replace the existing one in main.js)
 document.addEventListener('DOMContentLoaded', function() {
     const settingsStyles = `
         <style>
@@ -4195,25 +4225,45 @@ document.addEventListener('DOMContentLoaded', function() {
                 gap: 0.75rem;
                 flex-wrap: wrap;
                 margin-top: 2rem;
-                padding-top: 1rem;
-                border-top: 1px solid var(--border-color);
+                margin-bottom: 2rem;
             }
             
             .input-group {
                 display: flex;
                 align-items: stretch;
+                width: 100%;
+                position: relative;
             }
             
             .input-group .form-input {
+                flex: 1;
                 border-top-right-radius: 0;
                 border-bottom-right-radius: 0;
                 border-right: none;
+                min-width: 0;
+                margin-bottom: 0;
             }
             
             .input-group .btn {
                 border-top-left-radius: 0;
                 border-bottom-left-radius: 0;
                 border-left: 1px solid var(--border-color);
+                white-space: nowrap;
+                flex-shrink: 0;
+                padding: 0.5rem 0.75rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 44px;
+                background: var(--background-secondary);
+                color: var(--text-primary);
+                border: 2px solid var(--border-color);
+                cursor: pointer;
+                transition: background-color 0.2s ease;
+            }
+            
+            .input-group .btn:hover {
+                background: var(--background-tertiary);
             }
             
             .form-check-label {
@@ -4225,6 +4275,17 @@ document.addEventListener('DOMContentLoaded', function() {
             
             .form-check-input {
                 margin: 0;
+            }
+            
+            /* Ensure form groups containing input groups don't have conflicting styles */
+            .form-group .input-group {
+                margin-bottom: 0;
+            }
+            
+            .form-group .form-text {
+                margin-top: 0.25rem;
+                font-size: 0.875rem;
+                color: var(--text-secondary);
             }
         </style>
     `;

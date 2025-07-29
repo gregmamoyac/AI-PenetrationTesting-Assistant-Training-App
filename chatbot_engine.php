@@ -62,11 +62,22 @@ class ChatbotEngine {
             );
         }
         
+        $suggestedCommands = [];
+        if (!empty($response['suggested_command'])) {
+            $suggestedCommands[] = [
+                'id' => 'chatbot_cmd_0',
+                'command' => $response['suggested_command'],
+                'description' => $response['command_description'] ?? 'Chatbot suggestion',
+                'type' => 'chatbot'
+            ];
+        }
+
         return [
             'message_id' => $messageId,
             'bot_message_id' => $botMessageId,
             'bot_response' => $response['message'],
-            'suggested_command' => $response['suggested_command'],
+            'suggested_command' => $response['suggested_command'], // Keep for backward compatibility
+            'suggested_commands' => $suggestedCommands, // New format
             'command_description' => $response['command_description'],
             'suggestion_id' => $suggestionId,
             'category' => $response['category'],
@@ -720,9 +731,21 @@ function generateBotResponse($message, $context = [], $userId = null, $sessionId
         $chatbot = new ChatbotEngine($userId, $sessionId);
         $response = $chatbot->processMessage($message, $context);
         
+        // Convert to new format
+        $suggestedCommands = [];
+        if (!empty($response['suggested_command'])) {
+            $suggestedCommands[] = [
+                'id' => 'engine_cmd_0',
+                'command' => $response['suggested_command'],
+                'description' => $response['command_description'] ?? 'Generated command suggestion',
+                'type' => 'engine'
+            ];
+        }
+        
         return [
             'message' => $response['bot_response'],
-            'suggested_command' => $response['suggested_command'],
+            'suggested_command' => $response['suggested_command'], // Keep for backward compatibility
+            'suggested_commands' => $suggestedCommands, // New format
             'command_description' => $response['command_description'],
             'suggestion_context' => $context,
             'context' => []

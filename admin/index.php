@@ -626,25 +626,30 @@
                 <!-- System Settings Tab -->
                 <div id="systemSettings" class="settings-tab-content active">
                     <div class="settings-section">
-                        <h4>System Configuration</h4>
-                        <div class="form-group">
-                            <label class="form-label">Session Timeout (seconds)</label>
-                            <input type="number" id="sessionTimeout" class="form-input" value="3600">
-                        </div>
+                        <h4><i class="fas fa-gears"></i> System Settings</h4>
+                        <p class="text-muted">Configure GhostCrew settings</p>
+                        
+                        <div class="config-group">
+                            <h6><i class="fas fa-gears"></i> General</h6>
+                            <div class="form-group">
+                                <label class="form-label">Session Timeout (seconds)</label>
+                                <input type="number" id="sessionTimeout" class="form-input" value="3600">
+                            </div>
 
-                        <div class="form-group">
-                            <label class="form-label">Max Command History</label>
-                            <input type="number" id="maxCommandHistory" class="form-input" value="1000">
-                        </div>
+                            <div class="form-group">
+                                <label class="form-label">Max Command History</label>
+                                <input type="number" id="maxCommandHistory" class="form-input" value="1000">
+                            </div>
 
-                        <div class="form-group">
-                            <label class="form-label">Audit Retention (days)</label>
-                            <input type="number" id="auditRetention" class="form-input" value="90">
-                        </div>
+                            <div class="form-group">
+                                <label class="form-label">Audit Retention (days)</label>
+                                <input type="number" id="auditRetention" class="form-input" value="90">
+                            </div>
 
-                        <div class="form-group">
-                            <label class="form-label">Max Concurrent Sessions</label>
-                            <input type="number" id="maxConcurrentSessions" class="form-input" value="10">
+                            <div class="form-group">
+                                <label class="form-label">Max Concurrent Sessions</label>
+                                <input type="number" id="maxConcurrentSessions" class="form-input" value="10">
+                            </div>
                         </div>
 
                         <button class="btn btn-primary" onclick="saveSettings()">Save System Settings</button>
@@ -654,25 +659,25 @@
                 <!-- AI Configuration Tab -->
                 <div id="aiSettings" class="settings-tab-content">
                     <div class="settings-section">
-                        <h4><i class="fas fa-robot"></i> AWS AI Configuration</h4>
-                        <p class="text-muted">Configure and monitor your AWS AI integration</p>
+                        <h4><i class="fas fa-robot"></i> AI Configuration</h4>
+                        <p class="text-muted">Configure and monitor your AI integration</p>
 
-                        <!-- Performance Overview -->
+                        <!-- Performance Overview
                         <div class="ai-stats-grid" style="margin-bottom: 30px;">
                             <div id="aiPerformanceStats" class="ai-stats-container">
-                                <!-- Stats will be populated by JavaScript -->
+                                
                             </div>
-                        </div>
+                        </div>-->
 
                         <!-- Connection Settings -->
                         <div class="config-group">
                             <h6><i class="fas fa-link"></i> Connection Settings</h6>
                             <div class="form-row">
                                 <div class="form-group" style="flex: 2;">
-                                    <label class="form-label">AWS AI Endpoint URL</label>
+                                    <label class="form-label"> AI Endpoint URL</label>
                                     <input type="url" class="form-input" id="aws_ai_endpoint" 
                                            placeholder="https://api.anthropic.com/v1/messages" required>
-                                    <div class="form-text">The complete URL to your AWS AI service endpoint</div>
+                                    <div class="form-text">The complete URL to your AI service endpoint</div>
                                 </div>
                                 <div class="form-group" style="flex: 1;">
                                     <label class="form-label">Timeout (seconds)</label>
@@ -689,7 +694,7 @@
                                         <i class="fas fa-eye" id="apiKeyToggleIcon"></i>
                                     </button>
                                 </div>
-                                <div class="form-text">Your AWS AI service authentication key</div>
+                                <div class="form-text">Your AI service authentication key</div>
                             </div>
                         </div>
 
@@ -765,13 +770,13 @@
                             </button>
                         </div>
 
-                        <!-- AI Command Statistics -->
+                        <!-- AI Command Statistics
                         <div class="config-group" style="margin-top: 30px;">
                             <h6><i class="fas fa-terminal"></i> Top Command Suggestions</h6>
                             <div id="aiCommandStats">
-                                <!-- Command stats will be populated by JavaScript -->
+                                
                             </div>
-                        </div>
+                        </div>-->
 
                         <!-- Maintenance -->
                         <div class="config-group">

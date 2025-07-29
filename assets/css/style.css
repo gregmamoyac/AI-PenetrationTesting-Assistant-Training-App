@@ -4307,7 +4307,6 @@ header h1::before {
 }
 
 .chat-message.bot {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     border-left: 4px solid #007bff;
     position: relative;
 }
@@ -5077,4 +5076,289 @@ header h1::before {
 .connection-status.not-configured {
     background: rgba(255, 193, 7, 0.1);
     color: #ffc107;
+}
+
+/* Enhanced Chat Message Formatting */
+.chat-message .message-content {
+    line-height: 1.6;
+    word-wrap: break-word;
+}
+
+.chat-message .message-content p {
+    margin: 0 0 1em 0;
+}
+
+.chat-message .message-content p:last-child {
+    margin-bottom: 0;
+}
+
+/* Code formatting */
+.chat-message .inline-code {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    padding: 2px 6px;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.9em;
+    color: #00ff88;
+}
+
+.chat-message .code-block {
+    margin: 10px 0;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    overflow-x: auto;
+}
+
+.chat-message .code-block pre {
+    margin: 0;
+    padding: 12px;
+    background: transparent;
+    border: none;
+    color: #e0e0e0;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+
+.chat-message .code-block code {
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: inherit;
+}
+
+/* List formatting */
+.chat-message .bullet-point {
+    margin: 4px 0;
+    padding-left: 0;
+}
+
+.chat-message .numbered-point {
+    margin: 4px 0;
+    padding-left: 0;
+}
+
+/* Headers */
+.chat-message h2,
+.chat-message h3,
+.chat-message h4 {
+    margin: 1em 0 0.5em 0;
+    color: #00ff88;
+    font-weight: 600;
+}
+
+.chat-message h2 {
+    font-size: 1.3em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 4px;
+}
+
+.chat-message h3 {
+    font-size: 1.2em;
+}
+
+.chat-message h4 {
+    font-size: 1.1em;
+}
+
+/* Strong and emphasis */
+.chat-message strong {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.chat-message em {
+    color: #cccccc;
+    font-style: italic;
+}
+
+/* Fix for truncated responses */
+.chat-message .truncated-notice {
+    color: #ff6b6b;
+    font-style: italic;
+    margin-top: 8px;
+    padding: 8px;
+    background: rgba(255, 107, 107, 0.1);
+    border-left: 3px solid #ff6b6b;
+    border-radius: 0 4px 4px 0;
+}
+
+/* Command execution states */
+.terminal-input-container.executing {
+    opacity: 0.8;
+}
+
+.terminal-input-container.executing #terminal-input {
+    background-color: #2d3748;
+    border-color: #4299e1;
+}
+
+.terminal-input-container.executing #send-command {
+    background-color: #4299e1;
+    cursor: not-allowed;
+}
+
+.terminal-input-container.executing #send-command:hover {
+    background-color: #4299e1;
+}
+
+/* Streaming mode indicators */
+.tab.streaming {
+    background: linear-gradient(90deg, #1a202c 50%, #2d5a2d 50%);
+    animation: streaming-pulse 2s infinite;
+}
+
+@keyframes streaming-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.streaming-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #48bb78;
+    margin-left: 8px;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* Command suggestion highlight */
+.command-highlight {
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5) !important;
+    transition: box-shadow 0.2s ease;
+}
+
+/* Execution feedback */
+.execution-status {
+    position: absolute;
+    right: 80px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: #a0aec0;
+    display: none;
+}
+
+.execution-status.visible {
+    display: block;
+}
+
+
+/* Inline command containers */
+.inline-command-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0 2px;
+}
+
+.code-block-with-button {
+    position: relative;
+    margin: 10px 0;
+}
+
+.code-block-with-button .code-block {
+    margin-bottom: 0;
+}
+
+/* Inline load buttons */
+.inline-load-btn {
+    background: var(--accent-blue);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    vertical-align: middle;
+}
+
+.inline-load-btn.small {
+    padding: 1px 4px;
+    font-size: 10px;
+}
+
+.inline-load-btn:hover {
+    background: var(--accent-blue-dark);
+    transform: translateY(-1px);
+}
+
+.inline-loaded-btn {
+    background: var(--accent-green) !important;
+    cursor: default;
+}
+
+.inline-loaded-btn:hover {
+    transform: none;
+}
+
+/* Code block with button layout */
+.code-block-with-button {
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.code-block-with-button .inline-load-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px 8px;
+    font-size: 12px;
+    z-index: 1;
+}
+
+/* Command highlight animation */
+#terminal-input.command-highlight {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 8px rgba(var(--accent-blue-rgb), 0.3);
+    animation: commandPulse 0.5s ease-in-out;
+}
+
+@keyframes commandPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+.chat-messages {
+    position: relative;
+}
+
+.chat-scroll-indicator {
+    position: absolute;
+    bottom: 10px;
+    right: 15px;
+    background: rgba(0, 123, 255, 0.9);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.chat-scroll-indicator.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.chat-scroll-indicator:hover {
+    background: rgba(0, 123, 255, 1);
 }

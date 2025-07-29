@@ -1,8 +1,8 @@
 <?php
 /* index.php - Updated with chatbot integration (Fixed) */
 
-require_once 'auth_config.php';
 require_once 'config.php';
+require_once 'auth_config.php';
 
 // Require authentication
 requireAuth();
@@ -135,6 +135,7 @@ $aiStatus = getAiStatus();
                             <div class="terminal-input-container">
                                 <div class="prompt" id="terminal-prompt">$</div>
                                 <input type="text" id="terminal-input" placeholder="Enter command..." disabled>
+                                <span class="execution-status" id="execution-status">Executing...</span>
                                 <button id="send-command" disabled>Send</button>
                             </div>
                         </div>
@@ -142,7 +143,6 @@ $aiStatus = getAiStatus();
                         <div class="chat-section">
                             <div class="chat-header">
                                 <span>
-                                    <i class="fas fa-robot"></i>
                                     AI Command Assistant
                                     <?php if ($aiStatus['connected']): ?>
                                         <span class="ai-status-badge connected" title="AI Connected">

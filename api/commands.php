@@ -184,7 +184,7 @@ function sendCommand() {
             error_log("Error updating admin database: " . $e->getMessage());
         }
         
-        // Log audit event
+        // Log audit event (using async logging for performance)
         logAuditEvent($user['id'], 'command_execute', [
             'session_id' => $sessionId,
             'host_id' => $hostId,
@@ -215,10 +215,11 @@ function isInteractiveCommand($command) {
     $interactiveCommands = [
         'telnet', 'ssh', 'ftp', 'sftp', 'mysql', 'psql', 'redis-cli',
         'python', 'python3', 'node', 'irb', 'bc', 'gdb', 'vim', 'nano',
-        'less', 'more', 'top', 'htop', 'watch', 'tail', 'ping', 'nc', 'netcat'
+        'less', 'more', 'top', 'htop', 'watch', 'tail', 'ping', 'nc', 'netcat',
+        'sudo', 'su'  // ADD THESE
     ];
     
-    // Check exact command match (including standalone commands like 'telnet' with no args)
+    // Check exact command match
     if (in_array($baseCommand, $interactiveCommands)) {
         error_log("Interactive command detected (exact match): $baseCommand from command: $command");
         return true;
@@ -226,17 +227,27 @@ function isInteractiveCommand($command) {
     
     // Check for specific interactive patterns
     $interactivePatterns = [
-        '/^telnet(\s+.*)?$/',         // telnet with or without arguments
-        '/^ssh\s+/',                  // ssh with arguments  
-        '/^mysql\s+/',                // mysql with arguments
-        '/^psql\s+/',                 // psql with arguments
-        '/^python.*-i/',              // python with -i flag
-        '/^python3.*-i/',             // python3 with -i flag
-        '/^tail\s+.*-f/',             // tail -f
-        '/^watch\s+/',                // watch command
-        '/^ping\s+/',                 // ping command
-        '/^nc\s+/',                   // netcat
-        '/^netcat\s+/'                // netcat
+        '/^telnet(\s+.*)?$/',         
+        '/^ssh\s+/',                  
+        '/^mysql\s+/',                
+        '/^psql\s+/',                 
+        '/^python.*-i/',              
+        '/^python3.*-i/',             
+        '/^tail\s+.*-f/',             
+        '/^watch\s+/',                
+        '/^ping\s+/',                 
+        '/^nc\s+/',                   
+        '/^netcat\s+/',
+        // ADD THESE:
+        '/^sudo\s+.*passwd\s*/',      // sudo passwd
+        '/^sudo\s+.*su\s*/',          // sudo su
+        '/^su\s+.*/',                 // su commands
+        '/^sudo\s+.*adduser\s*/',     // sudo adduser
+        '/^sudo\s+.*useradd\s*/',     // sudo useradd
+        '/^sudo\s+.*usermod\s*/',     // sudo usermod
+        '/^sudo\s+.*visudo\s*/',      // sudo visudo
+        '/^sudo\s+.*john\s*/',      // sudo john
+        '/^sudo\s+.*dpkg-reconfigure\s*/', // sudo dpkg-reconfigure
     ];
     
     foreach ($interactivePatterns as $pattern) {
@@ -377,7 +388,7 @@ function getCommand() {
     $stmt->close();
 }
 
-// FIXED: Handle streaming output from client
+// FIXED: Handle streaming output from client with proper incremental accumulation
 function streamOutput() {
     global $conn;
     
@@ -397,7 +408,7 @@ function streamOutput() {
         return;
     }
     
-    error_log("Received streaming output for command $commandId (partial: " . ($isPartial ? 'YES' : 'NO') . "): " . substr($output, 0, 100) . "...");
+    error_log("Received streaming output for command $commandId (partial: " . ($isPartial ? 'YES' : 'NO') . ", sequence: $chunkSequence): " . substr($output, 0, 100) . "...");
     
     try {
         // Check if streaming tables exist, if not create simple ones
@@ -419,69 +430,50 @@ function streamOutput() {
             error_log("Created streaming_output table");
         }
         
-        if ($isPartial) {
-            // For partial updates, always append new content, don't replace
-            $stmt = $conn->prepare(
-                "INSERT INTO streaming_output (command_id, session_id, output_chunk, chunk_sequence, is_partial) 
-                VALUES (?, ?, ?, ?, ?)
-                ON DUPLICATE KEY UPDATE 
-                output_chunk = CONCAT(IFNULL(output_chunk, ''), VALUES(output_chunk)),
-                is_partial = VALUES(is_partial),
-                last_update = CURRENT_TIMESTAMP"
-            );
-            $stmt->bind_param("issii", $commandId, $sessionId, $output, $chunkSequence, $isPartial);
-            $stmt->execute();
-            
+        // Always insert new chunks (never update existing ones)
+        $stmt = $conn->prepare(
+            "INSERT INTO streaming_output (command_id, session_id, output_chunk, chunk_sequence, is_partial) 
+             VALUES (?, ?, ?, ?, ?)"
+        );
+        $stmt->bind_param("issii", $commandId, $sessionId, $output, $chunkSequence, $isPartial);
+        
+        if ($stmt->execute()) {
             // Update command history status to indicate it's executing/streaming
-            $stmt = $conn->prepare("UPDATE command_history SET status = 'executing' WHERE id = ? AND status = 'pending'");
-            $stmt->bind_param("i", $commandId);
-            $stmt->execute();
-            
-        } else {
-            // Final output - get complete output by concatenating all chunks
-            $stmt = $conn->prepare("SELECT GROUP_CONCAT(output_chunk ORDER BY chunk_sequence SEPARATOR '') as complete_output FROM streaming_output WHERE command_id = ?");
-            $stmt->bind_param("i", $commandId);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            
-            $completeOutput = $output; // Default to current output
-            if ($result->num_rows > 0) {
-                $row = $result->fetch_assoc();
-                // Only append if this is truly new content
-                $existingOutput = $row['complete_output'] ?: '';
-                if (!empty($output) && strpos($existingOutput, $output) === false) {
-                    $completeOutput = $existingOutput . $output;
-                } else {
-                    $completeOutput = $existingOutput;
+            if ($isPartial) {
+                $stmt = $conn->prepare("UPDATE command_history SET status = 'executing' WHERE id = ? AND status = 'pending'");
+                $stmt->bind_param("i", $commandId);
+                $stmt->execute();
+            } else {
+                // Final chunk - get complete output by concatenating all chunks in order
+                $stmt = $conn->prepare("SELECT GROUP_CONCAT(output_chunk ORDER BY chunk_sequence SEPARATOR '') as complete_output FROM streaming_output WHERE command_id = ?");
+                $stmt->bind_param("i", $commandId);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                
+                $completeOutput = '';
+                if ($result->num_rows > 0) {
+                    $row = $result->fetch_assoc();
+                    $completeOutput = $row['complete_output'] ?: '';
                 }
+                
+                // Update main command history with complete output
+                $stmt = $conn->prepare("UPDATE command_history SET output = ?, status = 'completed', response_timestamp = CURRENT_TIMESTAMP WHERE id = ?");
+                $stmt->bind_param("si", $completeOutput, $commandId);
+                $stmt->execute();
+                
+                // Close streaming session if it exists
+                $streamStmt = $conn->prepare("UPDATE streaming_sessions SET status = 'completed', end_time = CURRENT_TIMESTAMP WHERE command_id = ?");
+                $streamStmt->bind_param("i", $commandId);
+                $streamStmt->execute();
+                
+                error_log("Command $commandId completed with final output length: " . strlen($completeOutput));
             }
             
-            // Insert final chunk
-            $stmt = $conn->prepare(
-                "INSERT INTO streaming_output (command_id, session_id, output_chunk, chunk_sequence, is_partial) 
-                 VALUES (?, ?, ?, ?, 0)
-                 ON DUPLICATE KEY UPDATE 
-                 output_chunk = VALUES(output_chunk),
-                 is_partial = 0,
-                 last_update = CURRENT_TIMESTAMP"
-            );
-            $stmt->bind_param("issi", $commandId, $sessionId, $output, $chunkSequence);
-            $stmt->execute();
-            
-            // Update main command history with complete output
-            $stmt = $conn->prepare("UPDATE command_history SET output = ?, status = 'completed', response_timestamp = CURRENT_TIMESTAMP WHERE id = ?");
-            $stmt->bind_param("si", $completeOutput, $commandId);
-            $stmt->execute();
-            
-            // Close streaming session if it exists
-            $streamStmt = $conn->prepare("UPDATE streaming_sessions SET status = 'completed', end_time = CURRENT_TIMESTAMP WHERE command_id = ?");
-            $streamStmt->bind_param("i", $commandId);
-            $streamStmt->execute();
-            
-            error_log("Command $commandId completed with final output length: " . strlen($completeOutput));
+            echo json_encode(['status' => 'success']);
+        } else {
+            error_log("Failed to insert streaming output: " . $conn->error);
+            echo json_encode(['status' => 'error', 'message' => 'Failed to store streaming output']);
         }
-        
-        echo json_encode(['status' => 'success']);
         
     } catch (Exception $e) {
         error_log("Stream output error: " . $e->getMessage());
@@ -489,6 +481,7 @@ function streamOutput() {
     }
 }
 
+// Replace the getUserInput function
 function getUserInput() {
     global $conn;
     
@@ -516,10 +509,10 @@ function getUserInput() {
             return;
         }
         
-        // Get pending user input for this session
-        $stmt = $conn->prepare("SELECT id, input_data FROM user_input_queue 
+        // Get pending user input for this session with higher priority for newer inputs
+        $stmt = $conn->prepare("SELECT id, input_data, input_type FROM user_input_queue 
                                WHERE session_id = ? AND host_id = ? AND processed = 0 
-                               ORDER BY timestamp ASC LIMIT 1");
+                               ORDER BY priority DESC, timestamp ASC LIMIT 1");
         $stmt->bind_param("ss", $sessionId, $hostId);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -527,17 +520,18 @@ function getUserInput() {
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             
-            // Mark as processed
+            // Mark as processed immediately to prevent duplicate processing
             $updateStmt = $conn->prepare("UPDATE user_input_queue SET processed = 1, processed_at = CURRENT_TIMESTAMP WHERE id = ?");
             $updateStmt->bind_param("i", $row['id']);
             $updateStmt->execute();
             $updateStmt->close();
             
-            error_log("Retrieved user input for session $sessionId: " . $row['input_data']);
+            error_log("Retrieved user input for session $sessionId: " . substr($row['input_data'], 0, 50) . "...");
             
             echo json_encode([
                 'status' => 'success',
-                'input' => $row['input_data']
+                'input' => $row['input_data'],
+                'input_type' => $row['input_type'] ?? 'response'
             ]);
         } else {
             echo json_encode([

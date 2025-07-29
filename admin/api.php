@@ -11,11 +11,24 @@ header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
 
+if (!defined('ADMIN_DB_HOST')) {
+    define('ADMIN_DB_HOST', '192.168.1.171');
+}
+if (!defined('ADMIN_DB_USER')) {
+    define('ADMIN_DB_USER', 'svc_ghostcrew_admin');
+}
+if (!defined('ADMIN_DB_PASS')) {
+    define('ADMIN_DB_PASS', '!Password123!');
+}
+if (!defined('ADMIN_DB_NAME')) {
+    define('ADMIN_DB_NAME', 'ghostcrew_admin');
+}
+
 // Database configuration
-$host = getenv('DB_HOST');
-$username = getenv('DB_USER');
-$password = getenv('DB_PASS');
-$dbname = getenv('DB_NAME');
+$host = ADMIN_DB_HOST;
+$username = ADMIN_DB_USER;
+$password = ADMIN_DB_PASS;
+$dbname = ADMIN_DB_NAME;
 
 
 try {
@@ -851,12 +864,22 @@ function handleSessionDetail($pdo, $sessionId) {
     $stmt->execute([$sessionId]);
     $feedback = $stmt->fetch(PDO::FETCH_ASSOC);
     
+    // Get AI summary if exists
+    $stmt = $pdo->prepare("
+        SELECT ai_summary, summary_generated_at, command_count, session_duration
+        FROM session_summaries 
+        WHERE session_id = ?
+    ");
+    $stmt->execute([$sessionId]);
+    $aiSummary = $stmt->fetch(PDO::FETCH_ASSOC);
+    
     echo json_encode([
         'success' => true, 
         'session' => $session, 
         'commands' => $commands, 
         'conversations' => $conversations,
-        'feedback' => $feedback
+        'feedback' => $feedback,
+        'ai_summary' => $aiSummary
     ]);
 }
 
@@ -902,12 +925,22 @@ function handleGradingData($pdo, $sessionId) {
         $feedback['command_feedback'] = json_decode($feedback['command_feedback'], true);
     }
     
+    // Get AI summary if exists
+    $stmt = $pdo->prepare("
+        SELECT ai_summary, summary_generated_at, command_count, session_duration
+        FROM session_summaries 
+        WHERE session_id = ?
+    ");
+    $stmt->execute([$sessionId]);
+    $aiSummary = $stmt->fetch(PDO::FETCH_ASSOC);
+    
     echo json_encode([
         'success' => true, 
         'session' => $session, 
         'commands' => $commands, 
         'conversations' => $conversations,
-        'feedback' => $feedback
+        'feedback' => $feedback,
+        'ai_summary' => $aiSummary
     ]);
 }
 

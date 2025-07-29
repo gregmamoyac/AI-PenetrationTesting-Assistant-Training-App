@@ -325,6 +325,29 @@ function getSessionHistory() {
     ]);
 }
 
+function triggerSessionSummaryGeneration() {
+    try {
+        // Path to your existing script
+        $phpPath = "C:\\xampp\\php\\php.exe"; // Adjust for your PHP installation
+        $scriptPath = __DIR__ . "\\generate_session_summary.php";
+        
+        // Run asynchronously on Windows
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            // Windows
+            $command = "start /B \"\" \"$phpPath\" \"$scriptPath\"";
+            pclose(popen($command, 'r'));
+        } else {
+            // Linux/Unix
+            $command = "php \"$scriptPath\" > /dev/null 2>&1 &";
+            exec($command);
+        }
+        
+        error_log("Triggered session summary generation");
+        
+    } catch (Exception $e) {
+        error_log("Error triggering session summary generation: " . $e->getMessage());
+    }
+}
 
 function endSession() {
     $user = getCurrentUser();
@@ -351,6 +374,9 @@ function endSession() {
             'session_id' => $sessionId,
             'end_type' => 'manual'
         ]);
+        
+        // Trigger AI summary generation
+        triggerSessionSummaryGeneration();
         
         echo json_encode(['status' => 'success']);
     } else {

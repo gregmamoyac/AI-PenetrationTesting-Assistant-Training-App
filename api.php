@@ -12,6 +12,17 @@ header('Content-Type: application/json');
 
 $action = isset($_REQUEST['action']) ? sanitize($_REQUEST['action']) : '';
 
+// Log all API requests
+if (isset($_SESSION['user_id'])) {
+    $requestData = array_merge($_GET, $_POST);
+    unset($requestData['csrf_token']); // Remove sensitive data
+    logDetailedAuditEvent($_SESSION['user_id'], 'api_request', [
+        'action' => $action,
+        'endpoint' => $_SERVER['REQUEST_URI'] ?? '',
+        'method' => $_SERVER['REQUEST_METHOD'] ?? ''
+    ], $requestData);
+}
+
 $unauthenticated = ['register_host', 'ping_host', 'get_command', 'submit_result', 'stream_output', 'get_user_input', 'get_streaming_output', 'get_streaming_status'];
 if (!in_array($action, $unauthenticated) && !isset($_REQUEST['internal_call'])) {
     requireAuth();
@@ -51,17 +62,39 @@ $routes = [
     'rate_chat_message'             => 'chat.php',
     'get_command_suggestions'       => 'chat.php',
     'mark_suggestion_used'          => 'chat.php',
+    'submit_feedback'               => 'chat.php',            // ADDED
+    'mark_command_executed'         => 'chat.php',           // ADDED
+    'reset_chat_context'            => 'chat.php',           // ADDED
+    'analyze_command_result'        => 'chat.php',           // ADDED
     'export_ai_config'              => 'chat.php',
     'import_ai_config'              => 'chat.php',
     'check_ai_status'               => 'chat.php',
     'get_ai_performance'            => 'chat.php',
     'update_ai_config'              => 'chat.php',
-
 ];
 
-if (isset($routes[$action])) {
-    require __DIR__ . '/api/' . $routes[$action];
-} else {
-    echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
+try {
+    if (isset($routes[$action])) {
+        require __DIR__ . '/api/' . $routes[$action];
+    } else {
+        $errorResponse = ['status' => 'error', 'message' => 'Invalid action'];
+        if (isset($_SESSION['user_id'])) {
+            logDetailedAuditEvent($_SESSION['user_id'], 'error', [
+                'error_type' => 'invalid_action',
+                'action' => $action
+            ], $_REQUEST, $errorResponse);
+        }
+        echo json_encode($errorResponse);
+    }
+} catch (Exception $e) {
+    $errorResponse = ['status' => 'error', 'message' => 'Internal server error'];
+    if (isset($_SESSION['user_id'])) {
+        logDetailedAuditEvent($_SESSION['user_id'], 'error', [
+            'error_type' => 'exception',
+            'exception_message' => $e->getMessage(),
+            'exception_trace' => $e->getTraceAsString()
+        ], $_REQUEST, $errorResponse);
+    }
+    echo json_encode($errorResponse);
 }
 ?>
