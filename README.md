@@ -146,7 +146,7 @@ GhostCrew addresses these challenges by providing an AI-powered platform that si
 
 1. **Configure AI Endpoint**
 
-   >  **Note**: It is recommended to use the default AI models developed by the GhostCrew team, but if you chose to create your own, you will need to modify the files below to reflect your endpoint URL. Additional configuration may be required to ensure correct payload and response.
+   >  **Note**: It is recommended to use the default AI models developed by the GhostCrew team, but if you choose to create your own, you will need to modify the files below to reflect your endpoint URL. Additional modification may be required to ensure correct payload and response.
    
    Once your AI service is configured and tested:
    

