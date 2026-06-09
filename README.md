@@ -137,7 +137,7 @@ GhostCrew addresses these challenges by providing an AI-powered platform that si
 
 1. **Configure AI Endpoint**
 
-   >  **Note**: It is recommended to use the default AI models developed by the GhostCrew team, but if you choose to create your own, you will need to modify the files below to reflect your endpoint URL. Additional modification may be required to ensure correct payload and response.
+   >  **Note**: It is recommended to use the default AI models developed by the GhostCrew team, but if you choose to create your own, you will need to modify the files below to reflect your endpoint URL. Additional modification may be required to ensure correct payload and response. Contact for AWS Environment implementation guide.
    
    Once your AI service is configured and tested:
    
@@ -225,4 +225,7 @@ GhostCrew addresses these challenges by providing an AI-powered platform that si
 
 ## Contributing
 
-This project was developed as part of the UC Berkeley MICS Capstone Program
+This project was developed as part of the UC Berkeley MICS Capstone Program.
+
+Greg Mamoyac 
+Graduate Studies in Information and Cybersecurity
