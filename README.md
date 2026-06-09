@@ -225,7 +225,4 @@ GhostCrew addresses these challenges by providing an AI-powered platform that si
 
 ## Contributing
 
-This project was developed as part of the UC Berkeley MICS Capstone Program. For questions or contributions, please contact the development team through the official UC Berkeley project page.
-
-## Support
-
+This project was developed as part of the UC Berkeley MICS Capstone Program
