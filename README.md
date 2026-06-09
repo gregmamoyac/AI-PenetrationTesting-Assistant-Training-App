@@ -2,20 +2,6 @@
 
 An AI-powered simulation and decision-support platform for Red Team and penetration testing professionals.
 
-**MICS Capstone Project - Summer 2025**  
-UC Berkeley School of Information
-
-## Team Members
-
-- **Caleb Infinger**
-- **Katelynn Hernandez** 
-- **Joshua Penny**
-- **Gregory Mamoyac**
-- **Kevin Korp**
-- **Sahil Shankar**
-
-[View Project Details on UC Berkeley](https://www.ischool.berkeley.edu/projects/2025/ghostcrew)
-
 ## Description
 
 Red Team and penetration testing professionals often face limited access to realistic, high-fidelity training environments due to live exercises' high cost, time commitment, and logistical complexity. This lack of frequent, practical experience can lead to slower skill development and higher risk during real-world operations.
@@ -238,8 +224,3 @@ This project was developed as part of the UC Berkeley MICS Capstone Program. For
 
 ## Support
 
-For technical support or questions about this project, please refer to the [UC Berkeley project page](https://www.ischool.berkeley.edu/projects/2025/ghostcrew) or contact the development team.
-
----
-
-**Developed for the UC Berkeley School of Information MICS Capstone Summer 2025 Project**
